@@ -5,7 +5,7 @@ Sorcero is a new programming language that is designed to make programming feel 
 
 - ## Abstraction Layers
   Sorcero's abstraction layers provide developers with different levels of exposure to the more complex principles of the language, ranging from the novice level of "Apprentice" up to the expert level of "Archmage." This enables developers to work with a high-level interface that is closer to natural language, making it easier to write and maintain code, while also allowing them to work with more advanced features when required.
-  The abstraction layers in Sorcero are a key feature that sets it apart from other programming languages. By providing a high-level interface, developers can create software that is more adaptable to changing needs and requirements, reducing the risk of errors and bugs. Whether you are a seasoned developer or just starting out, Sorcero will help you create software that works like magic.
+  The abstraction layers in Sorcero are a key feature that sets it apart from other programming languages. By providing a high-level interface, developers can create software that is more adaptable to changing needs and requirements, reducing the risk of errors and bugs.
 
 - ## The Dark Side
 
