@@ -41,3 +41,7 @@ nov::cast add_numbers(a/i32, b/i32) -> i32
 
 9. 
 nov::cast::i32 -> add_numbers(a/i32, b/i32)
+
+10. 
+cast::add_numbers(a/i32, b/i32) -> i32 {
+
