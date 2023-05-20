@@ -1,44 +1,29 @@
 1.
-cast::add_numbers!
-(a:i32, b:i32)
--> i32 {
-    a + b
-}
+cast::add_numbers!(a:i32, b:i32) -> i32 {
 
 2.
 i32::add_numbers <<a:i32, b:i32>> {
-    @sum = a + b;
-    return sum
-}
 
 3.
 cast add_numbers: i32 -> (a: i32, b: i32) {
-    @sum = a + b;
-    sum
-}
 
 4. 
-nov::cast(i32):add_numbers(a/i32, b/i32){
-	a+b
-}
+nov::cast(i32) add_numbers(a/i32, b/i32) {
 
 5. 
-nov::i32 ->
-add_numbers<a'i32, b'i32>
+nov::i32 -> add_numbers<a'i32, b'i32> {
 
 6. 
-nov::cast
-add_numbers<a/i32, b/i32> -> i32
+nov::cast add_numbers<a/i32, b/i32> -> i32 {
 
 7. 
-nov::cast
-add_numbers//a:i32, b:i32// -> i32 
+nov::cast add_numbers//a:i32, b:i32// -> i32 { 
 
 8. 
-nov::cast add_numbers(a/i32, b/i32) -> i32 
+nov::cast add_numbers(a/i32, b/i32) -> i32 { 
 
 9. 
-nov::cast::i32 -> add_numbers(a/i32, b/i32)
+nov::cast::i32 add_numbers(a/i32, b/i32) {
 
 10. 
 cast::add_numbers(a/i32, b/i32) -> i32 {
