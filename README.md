@@ -1,4 +1,5 @@
 <img src="./Branding.svg">
+<img src="./MiniBranding.svg" width="25%">
 
 Sorcero is a new programming language that is designed to make programming feel like magic. With its use of sorcery and witchcraft, Sorcero provides a unique and engaging learning experience. The language is built with a borrow checker, which ensures that code is free from memory errors, making it easier to create secure and reliable software. Sorcero's abstraction layer allows developers to focus on the logic of their code, rather than getting bogged down in the details. Whether you are a seasoned developer or just starting out, Sorcero will help you create software that works like magic.
   
@@ -11,10 +12,6 @@ Sorcero is a new programming language that is designed to make programming feel 
 
   The "Dark Side" of Sorcero is a temptation that some developers find hard to resist. It refers to the ability to bypass the borrow checker and other safety features of the language and delve into the arcane depths of programming. The forbidden knowledge that lies beyond the safety rules can be alluring and powerful, but it also poses a risk of introducing memory errors and other bugs into your code. Only the most experienced and daring wizards should tread these dark paths, knowing full well the potential consequences of their actions.
   
----
-
-<img src="./MiniBranding.svg">
-
 ---
 
 # Sorcery Levels
