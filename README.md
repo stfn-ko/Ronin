@@ -1,5 +1,4 @@
 <img src="./public/Branding.svg">
-<img src="./public/MiniBranding.svg" width="25%">
 
 Sorcero is a new programming language that is designed to make programming feel like magic. With its use of sorcery and witchcraft, Sorcero provides a unique and engaging learning experience. The language is built with a borrow checker, which ensures that code is free from memory errors, making it easier to create secure and reliable software. Sorcero's abstraction layer allows developers to focus on the logic of their code, rather than getting bogged down in the details. Whether you are a seasoned developer or just starting out, Sorcero will help you create software that works like magic.
   
