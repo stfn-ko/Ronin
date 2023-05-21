@@ -83,6 +83,7 @@ typedef struct Error
         ERROR_GENERIC,
         ERROR_SYNTAX,
         ERROR_TODO,
+        ERROR_MAX,
     } type;
     char *msg;
 } Error;
@@ -96,7 +97,10 @@ void print_error(Error err)
         return;
     }
 
+    assert(ERROR_MAX == 6);
+
     printf("ERROR: ");
+
     switch (err.type)
     {
     default:
@@ -134,7 +138,7 @@ void print_error(Error err)
 
 /* LEXING */
 const char *whitespace = " \r\n";
-const char *delimiters = " \r\n<";
+const char *delimiters = " \r\n,.();/";
 
 /* given a src (souce), get the next token, and point to it with beg (begin) & end (end)*/
 Error lex(char *src, char **beg, char **end)
@@ -149,12 +153,63 @@ Error lex(char *src, char **beg, char **end)
 
     *beg = src;
     *beg += strspn(*beg, whitespace);
+    if (**end == '\0')
+    {
+        return err;
+    }
     *end = *beg;
     *end += strcspn(*beg, delimiters);
     return err;
 }
 
-Error parse(char *src)
+typedef signed char *isize;
+typedef long long i64;
+typedef long i32;
+typedef int i16;
+typedef char i8;
+
+typedef unsigned char *usize;
+typedef unsigned long long u64;
+typedef unsigned long u32;
+typedef unsigned int u16;
+typedef unsigned char u8;
+
+typedef struct Node
+{
+    enum NodeType
+    {
+        NODE_TYPE_NONE,
+        NODE_TYPE_INTEGER,
+    } type;
+    union NodeValue
+    {
+        i32 integer;
+    } value;
+} Node;
+
+struct Node **children;
+
+// TODO:
+// |-----API to create new Binding
+// |-----API to add Binding to Scope
+typedef struct Binding
+{
+    char *id;
+    Node *value;
+    struct Binding *next;
+} Binding;
+
+typedef struct Scope
+{
+    struct Scope *parent;
+    Binding *bind;
+} Scope;
+
+void scope_set()
+{
+}
+
+Error parse(char *src, Node *result)
 {
     Error err = ok;
     char *beg = src;
@@ -187,7 +242,8 @@ int main(int argc, char **argv)
     if (contents)
     {
         // printf("Contents of %s:\n---\n\"%s\"\n---\n", path, contents);
-        print_error(parse(contents));
+        Node *expression;
+        print_error(parse(contents, expression));
         free(contents);
     }
 
