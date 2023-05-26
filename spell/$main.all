@@ -23,6 +23,17 @@ class all {all(T); pub: <T>cast(T)};
 //             merlin run
 
 
+<<<<<<< HEAD
 //idea for refrences, pointers, etc:
 
 let a/i32 <r,w,>
+
+=======
+i32::add_numbers <<a:i32, b:i32>>
+
+i32::add_numbers(a/i32, b/i32)
+
+nov::cast add_numbers(a/i32, b/i32) -> i32 
+
+nov::cast::i32 -> add_numbers(a/i32, b/i32)
+>>>>>>> 0535a28824573dbabb5508096e17ff870f42747a
