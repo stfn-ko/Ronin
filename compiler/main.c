@@ -135,7 +135,7 @@ void print_error(Error err) {
 #define integerp(node) ((node).type == NODE_TYPE_INTEGER)
 
 const char *whitespace = " \r\n";
-const char *delimiters = " \r\n,.();/";
+const char *delimiters = " \r\n@";
 
 // TODO:
 // |-----API to create new node
@@ -166,6 +166,16 @@ typedef struct Scope {
     struct Scope *parent;
     Binding *bind;
 } Scope;
+
+
+typedef struct Token
+{
+    char *beg;
+    char *end;
+    struct Token *next;
+} Token;
+
+
 
 /* given a src (souce), get the next token, and point to it with beg (begin) & end (end)*/
 Error lex(char *src, char **beg, char **end) {
