@@ -21,3 +21,8 @@ class all {all(T); pub: <T>cast(T)};
 
 // pwsh -> ...
 //             merlin run
+
+
+//idea for refrences, pointers, etc:
+
+let a/i32 <r,w,>
