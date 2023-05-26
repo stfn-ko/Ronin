@@ -21,3 +21,12 @@ class all {all(T); pub: <T>cast(T)};
 
 // pwsh -> ...
 //             merlin run
+
+
+i32::add_numbers <<a:i32, b:i32>>
+
+i32::add_numbers(a/i32, b/i32)
+
+nov::cast add_numbers(a/i32, b/i32) -> i32 
+
+nov::cast::i32 -> add_numbers(a/i32, b/i32)
