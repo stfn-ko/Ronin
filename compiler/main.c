@@ -135,7 +135,7 @@ void print_error(Error err) {
 #define integerp(node) ((node).type == NODE_TYPE_INTEGER)
 
 const char *whitespace = " \r\n";
-const char *delimiters = " \r\n@";
+const char *delimiters = " \r\n,():/;{}<>";
 
 // TODO:
 // |-----API to create new node
@@ -175,23 +175,21 @@ typedef struct Token
     struct Token *next;
 } Token;
 
-
-
 /* given a src (souce), get the next token, and point to it with beg (begin) & end (end)*/
-Error lex(char *src, char **beg, char **end) {
+Error lex(char *src, Token *token) {
     Error err = ok;
-    if (!src || !beg || !end) {
+    if (!src || !token) {
         ERROR_PREP(err, ERROR_ARGUMENTS, "Can't lex empty source");
         return err;
     };
 
-    *beg = src;
-    *beg += strspn(*beg, whitespace);
-    if (**end == '\0') {
-        return err;
-    }
-    *end = *beg;
-    *end += strcspn(*beg, delimiters);
+    token->beg = src;
+    token->beg += strspn(token->beg, whitespace);
+    token->end = token->beg;
+    
+    if (*(token->end) == '\0') {return err;}
+    token->end += strcspn(token->beg, delimiters);
+    if (token->end == token->beg) {token->end += 1;}
     return err;
 }
 
@@ -199,15 +197,17 @@ void scope_set() {
 }
 
 Error parse(char *src, Node *res) {
+    Token token;
     Error err = ok;
-    char *beg = src;
-    char *end = src;
+    token.beg = src;
+    token.end = src;
+    token.next = NULL;
 
-    while ((err = lex(end, &beg, &end)).type == ERROR_NONE) {
-        if (end - beg == 0) {
+    while ((err = lex(token.end, &token)).type == ERROR_NONE) {
+        if (token.end - token.beg == 0) {
             break;
         }
-        printf("lexed: %.*s\n", end - beg, beg);
+        printf("lexed: %.*s\n", token.end - token.beg, token.beg);
     }
     return err;
 }
