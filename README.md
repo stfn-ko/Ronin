@@ -24,8 +24,8 @@ Sorcero's magic can generally be subdivided into two categories: white sorcery a
   - ### Novarion
     Novarion is the most basic level of Sorcero's white sorcery, providing a very high-level interface that allows developers to easily grasp the basics and start casting magic from the very first lines of code. It provides simple and intuitive capabilities that make it easy to learn and start building software that works like magic. The Novarion level of abstraction is accessed through the `nov::` namespace in Sorcero.
 
-  - ### Solarius
-    Solarius continues to provide a high-level interface like Novarion but introduces more complex functionality to concepts such as data structures and control flow statements. Instead of becoming something different it rather expands upon the functionality available in Novarion. The Solarius level of abstraction is accessed through the `sol::` namespace in Sorcero.
+  - ### Solarion
+    Solarion continues to provide a high-level interface like Novarion but introduces more complex functionality to concepts such as data structures and control flow statements. Instead of becoming something different it rather expands upon the functionality available in Novarion. The Solarion level of abstraction is accessed through the `sol::` namespace in Sorcero.
 
   - ### Alldivine
     Alldivine is the most advanced level of Sorcero's white sorcery, providing a highly customisable low-level interface that allows developers to have full control over the language and its features. The Alldivine level of abstraction is accessed through the `all::` namespace in Sorcero. Even though Alldivine is the highest level of white sorcery, it is still considered safe and not associated with the dark side of Sorcero. Alldivine wizards may have encountered aspects of darkness throughout their journey and may have even used some of the dark spells, but they are still considered experienced and skilled servers of light. With Alldivine, developers can create software that is highly optimised and efficient, making their code work like magic.
@@ -33,8 +33,8 @@ Sorcero's magic can generally be subdivided into two categories: white sorcery a
 - ## Dark Sorcery
   Dark sorcery is the side of Sorcero that delves into the arcane depths of programming, tempting developers with forbidden knowledge that lies beyond the safety rules and exposing them to potential bugs and errors.
 
-  - ### Neophyte
-    The Neophyte level of abstraction in dark sorcery provides a basic understanding of the dark arts of programming and introduces developers to the more complex and dangerous features of the language. Although it is still considered relatively safe, it is important for aspiring dark sorcerers to exercise caution and restraint when working with this level of abstraction. The Neophyte is accessed through the `neo::` namespace in Sorcero.
+  - ### Neophytus
+    The Neophytus level of abstraction in dark sorcery provides a basic understanding of the dark arts of programming and introduces developers to the more complex and dangerous features of the language. Although it is still considered relatively safe, it is important for aspiring dark sorcerers to exercise caution and restraint when working with this level of abstraction. The Neophytus is accessed through the `neo::` namespace in Sorcero.
 
   - ### Nocturnus
     Nocturnus is the intermediate level of abstraction in dark sorcery, providing developers with more advanced features and capabilities. As the name suggests, Nocturnus is associated with the dark and mysterious aspects of programming, exposing developers to the risks and rewards of the forbidden knowledge. The Nocturnus level is accessed through the `noc::` namespace in Sorcero.
