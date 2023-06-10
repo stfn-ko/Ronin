@@ -135,7 +135,7 @@ void print_error(Error err) {
 #define integerp(node) ((node).type == NODE_TYPE_INTEGER)
 
 const char *whitespace = " \r\n";
-const char *delimiters = " \r\n,():/;{}<>";
+const char *delimiters = " \r\n,;/{}()<>"; 
 
 // TODO:
 // |-----API to create new node
@@ -196,7 +196,7 @@ Error lex(char *src, Token *token) {
 void scope_set() {
 }
 
-Error parse(char *src, Node *res) {
+Error parse_expr(char *src, Node *res) {
     Token token;
     Error err = ok;
     token.beg = src;
@@ -225,7 +225,7 @@ int main(int argc, char **argv) {
     if (contents) {
         // printf("Contents of %s:\n---\n\"%s\"\n---\n", path, contents);
         Node *expression;
-        print_error(parse(contents, expression));
+        print_error(parse_expr(contents, expression));
         free(contents);
     }
 
