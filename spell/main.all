@@ -1,38 +1,5 @@
-class nov {
-pub: 
-    <T>nov(t/T) {t};
+i32 main () {
+    i32/rw x = 10;
+    x += 10;
+    return x;
 }
-
-nov(i32) : add_numbers(a/i32, b/i32) {
-    return a + b;
-}
-
-
-OR
-
-cast(i32) add_numbers(a/i32, b/i32) {
-    return a+b;
-}
-
-, where
-
-class all {all(T); pub: <T>cast(T)};
-
-
-// pwsh -> ...
-//             merlin run
-
-
-//idea for refrences, pointers, etc:
-
-let a/i32 <r,w,>
-
-i32::add_numbers <<a:i32, b:i32>>
-
-i32::add_numbers(a/i32, b/i32)
-
-nov::cast add_numbers(a/i32, b/i32) -> i32 
-
-nov::cast::i32 -> add_numbers(a/i32, b/i32)
-
-@
