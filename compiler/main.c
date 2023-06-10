@@ -167,13 +167,52 @@ typedef struct Scope {
     Binding *bind;
 } Scope;
 
-
 typedef struct Token
 {
     char *beg;
     char *end;
     struct Token *next;
 } Token;
+
+int token_string_eq(char *string, Token *token) {
+    if(!string||!token->beg||!token->end) return 0;
+    char *beg = token->beg;
+    while (*string && token->beg < token->end) {
+        if (*string != *beg) return 0;
+        string++;
+        beg++;
+    }
+    return 1;
+}
+
+Token *token_create() {
+    Token *token = malloc(sizeof(Token));
+    assert(token && "Could not allocate memory token");
+    memset(token, 0, sizeof(Token)); 
+    return token;
+}
+
+void free_tokens(Token *root) {
+    while (root) {
+        Token *token_to_free = root;
+        root = root->next;
+        free(token_to_free);
+    }
+}
+
+void print_tokens(Token *root) {
+    size_t count = 1;
+    while (root) {
+        if (count > 10000) break; //FIXME
+        printf("Token %zu: ", count);
+        if (root->beg && root->end) {
+            printf("%.*s", root->end - root->beg, root->beg);
+        }
+        putchar('\n');
+        root = root->next; 
+        count++;
+    }
+}
 
 /* given a src (souce), get the next token, and point to it with beg (begin) & end (end)*/
 Error lex(char *src, Token *token) {
@@ -197,18 +236,69 @@ void scope_set() {
 }
 
 Error parse_expr(char *src, Node *res) {
-    Token token;
+    Token *tokens = NULL;
+    Token *token_iter = tokens;
+    Token current_token;
+    current_token.beg = src;
+    current_token.end = src;
+    current_token.next = NULL;
+    
     Error err = ok;
-    token.beg = src;
-    token.end = src;
-    token.next = NULL;
 
-    while ((err = lex(token.end, &token)).type == ERROR_NONE) {
-        if (token.end - token.beg == 0) {
+    while ((err = lex(current_token.end, &current_token)).type == ERROR_NONE) {
+        if (current_token.end - current_token.beg == 0) {
             break;
         }
-        printf("lexed: %.*s\n", token.end - token.beg, token.beg);
+
+        if(tokens) {
+            token_iter->next = token_create();
+            memcpy(token_iter->next, &current_token, sizeof(Token));
+            token_iter = token_iter->next;
+        } else {
+            tokens = token_create();
+            memcpy(tokens, &current_token, sizeof(Token));
+            token_iter = tokens;
+        }
     }
+
+    print_tokens(tokens);
+    
+    Node *root = calloc(1, sizeof(Node));
+    assert(root && "Could not allocate memory for AST Node");
+    
+    token_iter = tokens;
+
+    while(token_iter) {
+        // TODO: map constructs from the lanf and attempt to create nodes
+        size_t token_length = token_iter->end - token_iter->beg;
+        char *token_contents = malloc(token_length + 1);
+        assert(token_contents && "Could not allocate string for token contents while parsing");
+        memcpy(token_contents, token_iter->beg, token_length);
+        token_contents[token_length] = '\0';
+
+        if (token_string_eq("i32", token_iter)) {
+            printf("Found 'i32' at token\n");
+
+            if (token_string_eq("/", token_iter->next)) {
+                if (token_string_eq("rw", token_iter->next->next)) {
+                    printf("Found 'rw' at token\n");
+                }
+                else if (token_string_eq("r", token_iter->next->next)) {
+                    printf("Found 'r' at token\n");
+                }
+            }
+            
+            if (token_iter->next && token_string_eq("=", token_iter->next->next)) {
+                printf("Found assignment\n");
+            } 
+            
+        }
+
+        token_iter = token_iter->next;
+    }
+
+    free_tokens(tokens);
+
     return err;
 }
 
