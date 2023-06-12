@@ -1,31 +1,28 @@
 ### Variable assignment
 
-**Type/Ownership variable = value;** 
+**Type/Ownership variable = value;**
 
-Ownership can be of two types: `**r**` and `**rw**`, which stand for read-only & read-write.
+Ownership can be of two types: `r` and `rw`, which stand for read-only & read-write.
 
 ### Examples
 
-`**i32/rw variable = 10;**`
+    `i32/rw variable = 10;`
 
-`**f64/r variable = 3.14;**`
+    `f64/r variable = 3.14;`
 
-`**bool/rw variable = true;**`
+    `bool/rw variable = true;`
 
-`**char/r variable = 'A';**`
+    `char/r variable = 'A';`
 
-`**str/rw variable = "Hello";**`
+    `str/rw variable = "Hello";`
 
-`**MyCustomType/r variable = createCustomType();**`
+    `MyCustomType/r variable = createCustomType();`
 
 ### Control Flow
 
 ### Conditional Statements (if-else)
 
-<aside>
-ℹ️ **can avoid ‘{}’ if it is a one-liner**
-
-</aside>
+> ℹ️ can avoid ‘{}’ if it is a one-liner
 
 **`if (statement) {…}`**
 
@@ -67,18 +64,16 @@ This for loop is similar to the previous example but does not include the iterat
 
 **`break` breaks from any loop**
 
-**`skip` skips the rest of the current iteration** 
+**`skip` skips the rest of the current iteration**
 
 ### Branching Constructs
 
 ### Match
 
-<aside>
-ℹ️ **can avoid ‘{}’ if it is a one-liner**
+> ℹ️ can avoid ‘{}’ if it is a one-liner
 
-</aside>
-
-**`match (expression) {
+```
+match (expression) {
     pattern1 :: {
         // Code block 1
     }
@@ -86,13 +81,15 @@ This for loop is similar to the previous example but does not include the iterat
     _ :: {
         // Default code block
     }
-}`**
+}
+```
 
 ### Patterns
 
 ### Variable Binding
 
-**`i32/r i = 10;
+```
+i32/r i = 10;
 match i {
     0 := i32/r x :: {
         println(x); //prints 0
@@ -104,7 +101,8 @@ match i {
     _ :: {
         println("Foo");
     }
-}`**
+}
+```
 
 In this example, the first pattern **`0 := i32/r x`** matches when **`i`** is equal to 0. It uses the **`:=`** operator for forward assignment, assigning the value of **`i`** to the immutable variable **`x`**. The code block associated with this pattern is executed, and inside the code block, **`x`** is printed, resulting in the output **`0`**.
 
@@ -112,10 +110,7 @@ The second pattern **`10 ::`** matches when **`i`** is equal to 10. It does not 
 
 The last pattern **`_ ::`** acts as a catch-all pattern, matching any value that did not match the previous patterns. In this case, the code block associated with the catch-all pattern simply prints the string "Foo" to the console.
 
-<aside>
-ℹ️ **In Sorcero, the `:=` operator can be used as an alternative syntax to initialize a variable with a value at the time of declaration. Logically `i32/r x = 10` is equal to `10 := i32/r x`**
-
-</aside>
+> ℹ️ In Sorcero, the `:=` operator can be used as an alternative syntax to initialize a variable with a value at the time of declaration. Logically `i32/r x = 10` is equal to `10 := i32/r x`
 
 ### Multiple Patterns
 
@@ -123,7 +118,8 @@ In Sorcero, you can utilize multiple patterns in a **`match`** statement to hand
 
 Here's an example that demonstrates multiple pattern matching in Sorcero:
 
-**`i32/r i = 10;
+```
+i32/r i = 10;
 match i {
     0 | 1 :: {
         println(i); //prints 0 or 1
@@ -138,6 +134,8 @@ match i {
     _ :: {
         println("Foo");
     }
-}`**
+
+}
+```
 
 The cases **`0`** and **`1`** are combined using the **`|`** operator. Similarly, the pattern **`2 .. 10`** matches any value from **`2`** to `**9**` (exclusive), and **`10 ..= 20`** matches any value from **`10`** to **`20`** (inclusive).
