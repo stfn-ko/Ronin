@@ -126,9 +126,8 @@ match i {
     }
     2 .. 10 :: {
         println(i); //prints anything from 2 up to 9
-    }`**
-
-    **`10 ..= 20 :: {
+    }
+    10 ..= 20 :: {
         println(i); //prints anything from 10 up to 20
     }
     _ :: {
