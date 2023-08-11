@@ -269,9 +269,10 @@ void scope_set()
 
 Error parse_expr(char *src, Node *res)
 {
+    Token current_token;
     Token *tokens = NULL;
     Token *tokens_it = tokens;
-    Token current_token;
+
     current_token.beg = src;
     current_token.end = src;
     current_token.next = NULL;
@@ -284,7 +285,7 @@ Error parse_expr(char *src, Node *res)
         {
             break;
         }
-        
+
         if (tokens)
         {
             tokens_it->next = token_create();
