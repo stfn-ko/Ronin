@@ -305,7 +305,7 @@ Error parse_expr(char *src, Node *res)
     Node *root = calloc(1, sizeof(Node));
     assert(root && "Could not allocate memory for AST Root.");
 
-    Node current_node;
+    Node current_node;some foobar
     current_node.children = NULL;
     current_node.next_child = NULL;
     current_node.type = NODE_TYPE_NONE;
