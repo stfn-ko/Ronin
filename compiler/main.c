@@ -305,11 +305,11 @@ Error parse_expr(char *src, Node *res)
     Node *root = calloc(1, sizeof(Node));
     assert(root && "Could not allocate memory for AST Root.");
 
-    Node current_node;some foobar
+    Node current_node;
     current_node.children = NULL;
     current_node.next_child = NULL;
     current_node.type = NODE_TYPE_NONE;
-    current_node.value.i32 = 0;
+    current_node.value.integer = 0;
 
     while ((err = lex(current_token.end, &current_token)).type == ERROR_NONE)
     {
