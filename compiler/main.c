@@ -1,12 +1,11 @@
+////////////////////////////////////////////    /* INCLUDES */
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+////////////////////////////////////////////
 
-/* TYPE DEFENITIONS */
-typedef long long integer_t;
-
-/* FILE HANDLING */
+////////////////////////////////////////////    /* FILE HANDLING */
 long file_size(FILE *file)
 {
     if (!file)
@@ -70,8 +69,9 @@ void print_usage(char **argv)
 {
     printf("USAGE: %s <path_to_file_to_compile>", argv[0]);
 }
+////////////////////////////////////////////
 
-/* ERRORS */
+////////////////////////////////////////////    /* ERRORS */
 #define ERROR_CREATE(n, t, msg_c) \
     Error(n) = {(t), (msg_c)}
 
@@ -131,48 +131,14 @@ void print_error(Error err)
         printf("\n\t-> %s", err.msg);
     }
 }
+////////////////////////////////////////////
 
-/* LEXING */
+////////////////////////////////////////////    /* LEXING */
 #define nonep(node) ((node).type == NODE_TYPE_NONE)
 #define integerp(node) ((node).type == NODE_TYPE_INTEGER)
 
 const char *whitespace = " \r\n";
 const char *delimiters = " \r\n,;/{}()<>";
-
-// TODO:
-// |-----API to create new node
-// |-----API to add node as child
-typedef struct Node
-{
-    enum NodeType
-    {
-        NODE_TYPE_NONE,
-        NODE_TYPE_INTEGER,
-        NODE_TYPE_PROGRAM,
-        NODE_TYPE_MAX,
-    } type;
-    union NodeValue
-    {
-        integer_t integer;
-    } value;
-    struct Node **children;
-} Node;
-
-// TODO:
-// |-----API to create new Binding
-// |-----API to add Binding to Scope
-typedef struct Binding
-{
-    char *id;
-    Node *value;
-    struct Binding *next;
-} Binding;
-
-typedef struct Scope
-{
-    struct Scope *parent;
-    Binding *bind;
-} Scope;
 
 typedef struct Token
 {
@@ -180,62 +146,6 @@ typedef struct Token
     char *end;
     struct Token *next;
 } Token;
-
-int token_string_eq(char *string, Token *token)
-{
-    if (!string || !token->beg || !token->end)
-        return 0;
-    char *beg = token->beg;
-    while (*string && token->beg < token->end)
-    {
-        if (*string != *beg)
-            return 0;
-        string++;
-        beg++;
-    }
-    return 1;
-}
-
-Token *token_create()
-{
-    Token *token = malloc(sizeof(Token));
-    assert(token && "Could not allocate memory token");
-    memset(token, 0, sizeof(Token));
-    return token;
-}
-
-void free_tokens(Token *root)
-{
-    while (root)
-    {
-        Token *token_to_free = root;
-        root = root->next;
-        free(token_to_free);
-    }
-}
-
-void print_tokens(Token *root)
-{
-    size_t count = 1;
-    while (root)
-    {
-        if (count > 10000)
-        {
-            break; // FIXME {remove this limit}
-        }
-
-        printf("Token %zu: ", count);
-
-        if (root->beg && root->end)
-        {
-            printf("%.*s\n", root->end - root->beg, root->beg);
-        }
-
-        root = root->next;
-
-        count++;
-    }
-}
 
 /* given a src (souce), get the next token, and point to it with beg (begin) & end (end)*/
 Error lex(char *src, Token *token)
@@ -262,22 +172,144 @@ Error lex(char *src, Token *token)
     }
     return err;
 }
+////////////////////////////////////////////
 
-void scope_set()
+////////////////////////////////////////////    /* PARSING */
+// TODO:
+// |-----API to create new node
+// |-----API to add node as child
+typedef struct Node
 {
+    enum NodeType
+    {
+        NODE_TYPE_NONE,
+        NODE_TYPE_INTEGER,
+        NODE_TYPE_PROGRAM,
+        NODE_TYPE_MAX,
+    } type;
+    union NodeValue
+    {
+        __INT64_TYPE__ integer;
+    } value;
+    struct Node *children;
+    struct Node *next_child;
+} Node;
+
+// TODO:
+// |-----API to create new Binding
+// |-----API to add Binding to Scope
+typedef struct Binding
+{
+    char *id;
+    Node *value;
+    struct Binding *next;
+} Binding;
+
+typedef struct Scope
+{
+    struct Scope *parent;
+    Binding *bind;
+} Scope;
+
+int token_string_eq(char *string, Token *token)
+{
+    if (!string || !token->beg || !token->end)
+        return 0;
+    char *beg = token->beg;
+    while (*string && token->beg < token->end)
+    {
+        if (*string != *beg)
+            return 0;
+        string++;
+        beg++;
+    }
+    return 1;
+}
+
+Token *token_create()
+{
+    Token *token = malloc(sizeof(Token));
+    assert(token && "Could not allocate memory token");
+    memset(token, 0, sizeof(Token));
+    return token;
+}
+
+void free_token(Token *root)
+{
+    while (root)
+    {
+        Token *token_to_free = root;
+        root = root->next;
+        free(token_to_free);
+    }
+}
+
+// TODO: Make more efficient
+void free_node(Node *root)
+{
+    if (!root)
+    {
+        return;
+    }
+
+    Node *child = root->children;
+    Node *tmp = child->next_child;
+
+    while (child)
+    {
+        tmp = child->next_child;
+        free_node(child);
+        child = tmp;
+    }
+
+    free(root);
+}
+
+void print_tokens(Token *root)
+{
+    size_t count = 1;
+    while (root)
+    {
+        if (count > 10000)
+        {
+            break; // FIXME {remove this limit}
+        }
+
+        printf("Token %zu: ", count);
+
+        if (root->beg && root->end)
+        {
+            printf("%.*s\n", root->end - root->beg, root->beg);
+        }
+
+        root = root->next;
+
+        count++;
+    }
 }
 
 Error parse_expr(char *src, Node *res)
 {
+    Error err = ok;
+    const size_t lookback_size = 8;
+
     Token current_token;
     Token *tokens = NULL;
     Token *tokens_it = tokens;
+    Token lookback[lookback_size];
 
     current_token.beg = src;
     current_token.end = src;
     current_token.next = NULL;
 
-    Error err = ok;
+    Node *root = calloc(1, sizeof(Node));
+    assert(root && "Could not allocate memory for AST Root.");
+
+    Node current_node;
+    current_node.children = NULL;
+    current_node.next_child = NULL;
+    current_node.type = NODE_TYPE_NONE;
+    current_node.value.i32 = 0;
 
     while ((err = lex(current_token.end, &current_token)).type == ERROR_NONE)
     {
@@ -286,67 +318,26 @@ Error parse_expr(char *src, Node *res)
             break;
         }
 
-        if (tokens)
+        if (token_string_eq(""))
+
+        for (size_t i = 1; i < lookback_size; ++i)
         {
-            tokens_it->next = token_create();
-            memcpy(tokens_it->next, &current_token, sizeof(Token));
-            tokens_it = tokens_it->next;
+            lookback[i-1] = lookback[i];
         }
-        else
-        {
-            tokens = token_create();
-            memcpy(tokens, &current_token, sizeof(Token));
-            tokens_it = tokens;
-        }
+
+        memcpy(&lookback[lookback_size - 1], &current_token, sizeof(Token));
+                
     }
-
-    print_tokens(tokens);
-
-    Node *root = calloc(1, sizeof(Node));
-    assert(root && "Could not allocate memory for AST Node");
-
-    tokens_it = tokens;
-
-    while (tokens_it)
-    {
-        // TODO: map constructs from the lanf and attempt to create nodes
-        size_t token_length = tokens_it->end - tokens_it->beg;
-        char *token_contents = malloc(token_length + 1);
-        assert(token_contents && "Could not allocate string for token contents while parsing");
-        memcpy(token_contents, tokens_it->beg, token_length);
-        token_contents[token_length] = '\0';
-
-        if (token_string_eq("i32", tokens_it))
-        {
-            printf("Found 'i32' at token\n");
-
-            if (token_string_eq("/", tokens_it->next))
-            {
-                if (token_string_eq("rw", tokens_it->next->next))
-                {
-                    printf("Found 'rw' at token\n");
-                }
-                else if (token_string_eq("r", tokens_it->next->next))
-                {
-                    printf("Found 'r' at token\n");
-                }
-            }
-
-            if (tokens_it->next && token_string_eq("=", tokens_it->next->next))
-            {
-                printf("Found assignment operator '='\n");
-            }
-        }
-
-        tokens_it = tokens_it->next;
-    }
-
-    free_tokens(tokens);
 
     return err;
 }
 
-/* MAIN */
+void scope_set()
+{
+}
+////////////////////////////////////////////
+
+////////////////////////////////////////////    /* MAIN */
 int main(int argc, char **argv)
 {
     if (argc < 2)
