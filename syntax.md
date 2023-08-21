@@ -1,10 +1,10 @@
-### Variable assignment
+# Variable assignment
 
 **Type/Ownership variable = value;**
 
 Ownership can be of two types: `r` and `rw`, which stand for read-only & read-write.
 
-### Examples
+## Examples
 
     `i32/rw variable = 10;`
 
@@ -18,9 +18,9 @@ Ownership can be of two types: `r` and `rw`, which stand for read-only & read-wr
 
     `MyCustomType/r variable = createCustomType();`
 
-### Control Flow
+# Control Flow
 
-### Conditional Statements (if-else)
+## Conditional Statements (if-else)
 
 > ℹ️ can avoid ‘{}’ if it is a one-liner
 
@@ -30,9 +30,9 @@ Ownership can be of two types: `r` and `rw`, which stand for read-only & read-wr
 
 **`else {…}`**
 
-### Loop Contructs
+# Loop Contructs
 
-### For Loops
+## For Loops
 
 ### Option 1
 
@@ -52,21 +52,21 @@ This for loop uses a range-based iteration syntax. It iterates over the elements
 
 This for loop is similar to the previous example but does not include the iteration count or index. It iterates over the elements of the **`arr`** array and assigns each element's value to the immutable reference variable **`val`**. This loop is convenient when you only need to access the values of the array elements during the loop execution.
 
-### While Loops
+## While Loops
 
 **`while (i < 10) {…}`**
 
-### Infinite Loops
+## Infinite Loops
 
 **`loop {…}`**
 
-### Loop Control Statements
+## Loop Control Statements
 
 **`break` breaks from any loop**
 
 **`skip` skips the rest of the current iteration**
 
-### Branching Constructs
+## Branching Constructs
 
 ### Match
 
@@ -84,7 +84,7 @@ match (expression) {
 }
 ```
 
-### Patterns
+## Patterns
 
 ### Variable Binding
 
@@ -110,13 +110,13 @@ The second pattern **`10 ::`** matches when **`i`** is equal to 10. It does not 
 
 The last pattern **`_ ::`** acts as a catch-all pattern, matching any value that did not match the previous patterns. In this case, the code block associated with the catch-all pattern simply prints the string "Foo" to the console.
 
-> ℹ️ In Sorcero, the `:=` operator can be used as an alternative syntax to initialize a variable with a value at the time of declaration. Logically `i32/r x = 10` is equal to `10 := i32/r x`
+> ℹ️ In Ronin, the `:=` operator can be used as an alternative syntax to initialize a variable with a value at the time of declaration. Logically `i32/r x = 10` is equal to `10 := i32/r x`
 
 ### Multiple Patterns
 
-In Sorcero, you can utilize multiple patterns in a **`match`** statement to handle different cases based on the value being matched. To achieve this, you can separate multiple patterns using the **`|`** operator.
+In , you can utilize multiple patterns in a **`match`** statement to handle different cases based on the value being matched. To achieve this, you can separate multiple patterns using the **`|`** operator.
 
-Here's an example that demonstrates multiple pattern matching in Sorcero:
+Here's an example that demonstrates multiple pattern matching in Ronin:
 
 ```
 i32/r i = 10;
