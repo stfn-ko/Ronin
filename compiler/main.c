@@ -291,12 +291,10 @@ void print_tokens(Token *root)
 Error parse_expr(char *src, Node *res)
 {
     Error err = ok;
-    const size_t lookback_size = 8;
 
     Token current_token;
     Token *tokens = NULL;
     Token *tokens_it = tokens;
-    Token lookback[lookback_size];
 
     current_token.beg = src;
     current_token.end = src;
@@ -304,6 +302,7 @@ Error parse_expr(char *src, Node *res)
 
     Node *root = calloc(1, sizeof(Node));
     assert(root && "Could not allocate memory for AST Root.");
+    root->type = NODE_TYPE_PROGRAM;
 
     Node current_node;
     current_node.children = NULL;
@@ -313,20 +312,28 @@ Error parse_expr(char *src, Node *res)
 
     while ((err = lex(current_token.end, &current_token)).type == ERROR_NONE)
     {
-        if (current_token.end - current_token.beg == 0)
+        size_t tok_len = current_token.end - current_token.beg;
+
+        if (!tok_len)
         {
             break;
         }
 
-        if (token_string_eq(""))
-
-        for (size_t i = 1; i < lookback_size; ++i)
+        if (tok_len && (*current_token.beg) == '0')
         {
-            lookback[i-1] = lookback[i];
+            current_node.type = NODE_TYPE_INTEGER;
+            printf("Zero integer!\n");
         }
 
-        memcpy(&lookback[lookback_size - 1], &current_token, sizeof(Token));
-                
+        if (current_node.value.integer = strtoll(current_token.beg, NULL, 10))
+        {
+            printf("Found integer literal %lld!\n", current_node.value.integer);
+        }
+
+        if (token_string_eq("i32", &current_token))
+        {
+            Token equals;
+        }
     }
 
     return err;
