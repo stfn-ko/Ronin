@@ -5,18 +5,19 @@
 Ownership can be of two types: `r` and `rw`, which stand for read-only & read-write.
 
 ## Examples
+```Rust
+    i32/rw variable = 10;
 
-    `i32/rw variable = 10;`
+    f64/r variable = 3.14;
 
-    `f64/r variable = 3.14;`
+    bool/rw variable = true;
 
-    `bool/rw variable = true;`
+    char/r variable = 'A';
 
-    `char/r variable = 'A';`
+    str/rw variable = "Hello";
 
-    `str/rw variable = "Hello";`
-
-    `MyCustomType/r variable = createCustomType();`
+    MyCustomType/r variable = createCustomType();
+```
 
 # Control Flow
 
@@ -72,7 +73,7 @@ This for loop is similar to the previous example but does not include the iterat
 
 > ℹ️ can avoid ‘{}’ if it is a one-liner
 
-```
+```Rust
 match (expression) {
     pattern1 :: {
         // Code block 1
@@ -88,7 +89,7 @@ match (expression) {
 
 ### Variable Binding
 
-```
+```Rust
 i32/r i = 10;
 match i {
     0 := i32/r x :: {
@@ -118,7 +119,7 @@ In , you can utilize multiple patterns in a **`match`** statement to handle diff
 
 Here's an example that demonstrates multiple pattern matching in Ronin:
 
-```
+```Rust
 i32/r i = 10;
 match i {
     0 | 1 :: {
