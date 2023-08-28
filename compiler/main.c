@@ -2,6 +2,20 @@
 #include <stdio.h>
 #include "ANSI.h"
 
+enum tok_type {
+    tok_keyword, 
+    tok_operator,
+    tok_literal,
+    tok_identifier
+};
+
+typedef struct token {
+    enum tok_type type;
+    char *lexeme;
+    long line;
+    int col;
+} token;
+
 char *readf_2buff(char *_fpath)
 {
     if (!_fpath)
@@ -37,14 +51,20 @@ char *readf_2buff(char *_fpath)
     return buff;
 }
 
-char *parsef(char *_fpath)
+void lex(const char *src)
 {
-    return readf_2buff(_fpath);
+       
+}
+
+void parse_expr(char *_fpath)
+{
+    char *buff = readf_2buff(_fpath);
+    lex(buff);
 }
 
 int main(int argc, char **argv)
 {
-    printf("%s", parsef(argv[1]));
-
+    // printf("%s", parsef(argv[1]));
+    parse_expr(argv[1]);
     return 0;
 }
