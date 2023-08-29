@@ -24,7 +24,7 @@ char *readf_2buff(char *_fpath)
 {
     if (!_fpath)
     {
-        printf(RC_Red "\n\t --> error: " Reset "no input files.\n\n");
+        printf(UL_Red "\n\terror -->" Reset " no input files\n\n");
         exit(EXIT_FAILURE);
     }
 
@@ -32,7 +32,13 @@ char *readf_2buff(char *_fpath)
 
     if (!fp)
     {
-        printf(RC_Red "\n\t --> error: " Reset "no such file or directory.\n\n");
+        printf(UL_Red "\n\terror -->" Reset " no such file or directory\n\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (!strstr(_fpath, ".ro"))
+    {
+        printf(UL_Red "\n\terror --> invalid file extension\n\n" Reset);
         exit(EXIT_FAILURE);
     }
 
@@ -45,13 +51,13 @@ char *readf_2buff(char *_fpath)
 
     if (!buff)
     {
-        printf(RC_Red "\n\t --> error: " Reset "out of memory.\n\n");
+        printf(UL_Red "\n\terror -->" Reset " out of memory\n\n");
         exit(EXIT_FAILURE);
     }
 
     if (fread(buff, 1, fs, fp) != fs)
     {
-        printf(RC_Red "\n\t --> error: " Reset "eof reached while reading.\n\n");
+        printf(UL_Red "\n\terror -->" Reset " eof reached while reading\n\n");
         exit(EXIT_FAILURE);
     }
 
@@ -81,17 +87,19 @@ void *lex(char *_src)
     {
         if (!_src || !beg || !end)
         {
-            printf(RC_Red "\n\t --> error: " Reset "can't lex an empty source.\n\n");
+            printf(UL_Red "\n\terror -->" Reset " can't lex an empty source\n\n");
             exit(EXIT_FAILURE);
         }
 
         beg += strspn(beg, whitespace);
         end = beg + min_strcspn(beg, delimiters, punctuators);
 
-        if (end - beg == 0) end++;
-        
+        if (end - beg == 0)
+            end++;
+
+        // assignment here
         printf("lexed: %.*s\n", end - beg, beg);
-        
+
         beg = end;
     }
 }
