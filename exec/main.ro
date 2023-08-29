@@ -1,6 +1,6 @@
 i32 main () {
     i32/rw x = 10;
-    i32/r y=13;
+    i32/r y = 13;
     x = 10;
     return x;
 }
