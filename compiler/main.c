@@ -62,8 +62,15 @@ char *readf_2buff(char *_fpath)
 }
 
 static const char *whitespace = " \r\n";
-static const char *delimiters = "(){}[]";
+static const char *delimiters = " \r\n(){}[]";
 static const char *punctuators = "+-/*=,.;";
+
+size_t min_strcspn(char *_cptr, const char *_cstr1, const char *_cstr2)
+{
+    size_t c1 = strcspn(_cptr, _cstr1);
+    size_t c2 = strcspn(_cptr, _cstr2);
+    return (c1 < c2) ? c1 : c2;
+}
 
 void *lex(char *_src)
 {
@@ -78,11 +85,13 @@ void *lex(char *_src)
             exit(EXIT_FAILURE);
         }
 
-        end += strcspn(beg, whitespace);
-        if (end - beg)
-            printf("lexed: %.*s\n", end - beg, beg);
-        else
-            end = ++beg;
+        beg += strspn(beg, whitespace);
+        end = beg + min_strcspn(beg, delimiters, punctuators);
+
+        if (end - beg == 0) end++;
+        
+        printf("lexed: %.*s\n", end - beg, beg);
+        
         beg = end;
     }
 }
