@@ -1,8 +1,11 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include "ANSI.h"
+// ===-------------------------------------------=== INCLUDES
+#include "file_handler.c"
 
+// ===-------------------------------------------=== GLOBAL VARS
+static const char *whitespace = " \r\n";
+static const char *delimiters = " \r\n(){}[]+-/*=,.;";
+
+// ===-------------------------------------------=== STRUCTS
 enum tok_type
 {
     tok_keyword,
@@ -12,104 +15,78 @@ enum tok_type
     tok_delimeter
 };
 
-typedef struct token
+typedef struct Token
 {
-    enum tok_type type;
     char *lexeme;
-    int line;
-    int col;
-} token;
+    enum tok_type type;
+    struct Token *next_tok;
+} Token;
 
-char *readf_2buff(char *_fpath)
+// size_t min_strcspn(char *_cptr, const char *_cstr1, const char *_cstr2)
+// {
+//     size_t c1 = strcspn(_cptr, _cstr1);
+//     size_t c2 = strcspn(_cptr, _cstr2);
+//     return (c1 < c2) ? c1 : c2;
+// }
+
+
+
+Token *create_token(char *_src, size_t _bytes_to_read)
 {
-    if (!_fpath)
-    {
-        printf(UL_Red "\n\terror -->" Reset " no input files\n\n");
-        exit(EXIT_FAILURE);
-    }
+    Token *new_tok = malloc(sizeof(Token));
 
-    FILE *fp = fopen(_fpath, "rb");
+    if (!new_tok)
+        perroex("couldn't allocate memory for a new token");
 
-    if (!fp)
-    {
-        printf(UL_Red "\n\terror -->" Reset " no such file or directory\n\n");
-        exit(EXIT_FAILURE);
-    }
+    memset(new_tok, 0, sizeof(Token));
 
-    if (!strstr(_fpath, ".ro"))
-    {
-        printf(UL_Red "\n\terror --> invalid file extension\n\n" Reset);
-        exit(EXIT_FAILURE);
-    }
-
-    // get file size
-    fseek(fp, 0, SEEK_END);
-    unsigned long fs = ftell(fp);
-    rewind(fp);
-
-    char *buff = (char *)malloc(sizeof(char) * (fs + 1));
-
-    if (!buff)
-    {
-        printf(UL_Red "\n\terror -->" Reset " out of memory\n\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (fread(buff, 1, fs, fp) != fs)
-    {
-        printf(UL_Red "\n\terror -->" Reset " eof reached while reading\n\n");
-        exit(EXIT_FAILURE);
-    }
-
-    fclose(fp);
-    buff[fs] = '\0';
-
-    return buff;
+    return new_tok;
 }
 
-static const char *whitespace = " \r\n";
-static const char *delimiters = " \r\n(){}[]";
-static const char *punctuators = "+-/*=,.;";
-
-size_t min_strcspn(char *_cptr, const char *_cstr1, const char *_cstr2)
-{
-    size_t c1 = strcspn(_cptr, _cstr1);
-    size_t c2 = strcspn(_cptr, _cstr2);
-    return (c1 < c2) ? c1 : c2;
-}
-
-void *lex(char *_src)
+// ===-------------------------------------------=== lex
+Token *lex(char *_src)
 {
     char *beg = _src;
     char *end = _src;
 
+    Token *tok_list, *head = tok_list;
+
     while (*end != '\0')
     {
         if (!_src || !beg || !end)
-        {
-            printf(UL_Red "\n\terror -->" Reset " can't lex an empty source\n\n");
-            exit(EXIT_FAILURE);
-        }
+            perroex("can't lex an empty source");
 
         beg += strspn(beg, whitespace);
-        end = beg + min_strcspn(beg, delimiters, punctuators);
+        end = beg + strcspn(beg, delimiters);
+        
+        // checking for one-line comment
+        if (*beg == '/' && *(beg + 1) == '/') 
+        {
+            while (*beg != '\n') ++beg;
+            end = ++beg;
+            continue;
+        }
 
         if (end - beg == 0)
             end++;
 
-        // assignment here
         printf("lexed: %.*s\n", end - beg, beg);
+        // tok_list = create_token(beg, end - beg);
 
         beg = end;
     }
+
+    return head;
 }
 
+// ===-------------------------------------------=== parse_expr
 void parse_expr(char *_fpath)
 {
     char *buff = readf_2buff(_fpath);
-    lex(buff);
+    Token *tok_list = lex(buff);
 }
 
+// ===-------------------------------------------=== main
 int main(int argc, char **argv)
 {
     parse_expr(argv[1]);
