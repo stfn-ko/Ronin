@@ -57,28 +57,13 @@ Token *lex(char *_src)
             perroex("can't lex an empty source");
 
         beg += strspn(beg, whitespace);
-        end = beg + strcspn(beg, delimiters);
-        
-        // checking for one-line comment
+        end = beg + strcspn(beg, delimiters);     
+
+        // skip one-line comment
         if (*beg == '/' && *(beg + 1) == '/') 
         {
             while (*beg != '\n') ++beg;
             end = ++beg;
-            continue;
-        }
-
-        // checking for multi-line comment
-        
-        //      i32 /* foo */ main() 
-        // beg       ^
-        // end      ^
-        
-        if (*beg == '/' && *(beg + 1) == '*') 
-        {
-            beg += 2;
-            while (*beg != '*' && *(beg + 1) != '/') ++beg;
-            beg += 2;
-            end = beg;
             continue;
         }
 
