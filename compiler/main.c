@@ -67,6 +67,21 @@ Token *lex(char *_src)
             continue;
         }
 
+        // checking for multi-line comment
+        
+        //      i32 /* foo */ main() 
+        // beg       ^
+        // end      ^
+        
+        if (*beg == '/' && *(beg + 1) == '*') 
+        {
+            beg += 2;
+            while (*beg != '*' && *(beg + 1) != '/') ++beg;
+            beg += 2;
+            end = beg;
+            continue;
+        }
+
         if (end - beg == 0)
             end++;
 
