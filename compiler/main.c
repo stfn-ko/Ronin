@@ -29,8 +29,6 @@ typedef struct Token
 //     return (c1 < c2) ? c1 : c2;
 // }
 
-
-
 Token *create_token(char *_src, size_t _bytes_to_read)
 {
     Token *new_tok = malloc(sizeof(Token));
@@ -57,12 +55,33 @@ Token *lex(char *_src)
             perroex("can't lex an empty source");
 
         beg += strspn(beg, whitespace);
-        end = beg + strcspn(beg, delimiters);     
+        end = beg + strcspn(beg, delimiters);
+
+        if (*beg == '/' && *(beg + 1) == '*')
+        {
+            beg += 2;
+
+            while (*beg)
+            {
+                if (*beg == '*')
+                {
+                    if (*(beg + 1) == '/')
+                        break;
+                    else if (*(beg + 1) == '\r' && *(beg + 2) == '/')
+                        break;
+                }
+                beg++;
+            }
+
+            end = beg += 2;
+            continue;
+        }
 
         // skip one-line comment
-        if (*beg == '/' && *(beg + 1) == '/') 
+        else if (*beg == '/' && *(beg + 1) == '/')
         {
-            while (*beg != '\n') ++beg;
+            while (*beg != '\n')
+                ++beg;
             end = ++beg;
             continue;
         }
