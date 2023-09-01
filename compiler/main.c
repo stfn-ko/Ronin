@@ -57,35 +57,6 @@ Token *lex(char *_src)
         beg += strspn(beg, whitespace);
         end = beg + strcspn(beg, delimiters);
 
-        if (*beg == '/' && *(beg + 1) == '*')
-        {
-            beg += 2;
-
-            while (*beg)
-            {
-                if (*beg == '*')
-                {
-                    if (*(beg + 1) == '/')
-                        break;
-                    else if (*(beg + 1) == '\r' && *(beg + 2) == '/')
-                        break;
-                }
-                beg++;
-            }
-
-            end = beg += 2;
-            continue;
-        }
-
-        // skip one-line comment
-        else if (*beg == '/' && *(beg + 1) == '/')
-        {
-            while (*beg != '\n')
-                ++beg;
-            end = ++beg;
-            continue;
-        }
-
         if (end - beg == 0)
             end++;
 
