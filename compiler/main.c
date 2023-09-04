@@ -76,9 +76,22 @@ void parse_expr(char *_fpath)
     Token *tok_list = lex(buff);
 }
 
+void get_flags(const int _flagc, const char **flagv)
+{
+
+    for (int i = 0; i < _flagc; ++i)
+    {        
+        if (!strcmp(flagv[i], "--lean-ron")) print_lean_ronin();
+        else if (!strcmp(flagv[i], "--uni-ron")) print_universal_ronin();
+    }
+}
+
 // ===-------------------------------------------=== main
 int main(int argc, char **argv)
 {
+    if (argc > 2) get_flags(argc - 2, (const char **)(argv + 2));
+    
     parse_expr(argv[1]);
+    
     return 0;
 }
