@@ -1,6 +1,8 @@
-# Variable assignment
+# Meet Ronin
 
-**Type/Ownership variable = value;**
+<br>
+
+# Variable assignment
 
 Ownership can be of two types: `r` and `rw`, which stand for read-only & read-write.
 
@@ -19,6 +21,8 @@ Ownership can be of two types: `r` and `rw`, which stand for read-only & read-wr
     MyCustomType/r variable = createCustomType();
 ```
 
+<br>
+
 # Control Flow
 
 ## Conditional Statements (if-else)
@@ -31,7 +35,9 @@ Ownership can be of two types: `r` and `rw`, which stand for read-only & read-wr
 
 **`else {…}`**
 
-# Loop Contructs
+<br>
+
+# Loop Constructs
 
 ## For Loops
 
@@ -84,6 +90,7 @@ match (expression) {
     }
 }
 ```
+<br>
 
 ## Patterns
 
@@ -115,7 +122,7 @@ The last pattern **`_ ::`** acts as a catch-all pattern, matching any value that
 
 ### Multiple Patterns
 
-In , you can utilize multiple patterns in a **`match`** statement to handle different cases based on the value being matched. To achieve this, you can separate multiple patterns using the **`|`** operator.
+In, you can utilize multiple patterns in a **`match`** statement to handle different cases based on the value being matched. To achieve this, you can separate multiple patterns using the **`|`** operator.
 
 Here's an example that demonstrates multiple pattern matching in Ronin:
 
