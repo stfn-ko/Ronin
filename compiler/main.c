@@ -6,19 +6,20 @@ static const char *whitespace = " \r\n";
 static const char *delimiters = " \r\n(){}[]+-/*=,.;";
 
 // ===-------------------------------------------=== STRUCTS
-enum tok_type
+typedef enum TokenType
 {
+    tok_undefined,
     tok_keyword,
     tok_identifier,
     tok_literal,
     tok_punctuation,
     tok_delimeter
-};
+} TokenType;
 
 typedef struct Token
 {
     char *lexeme;
-    enum tok_type type;
+    TokenType type;
     struct Token *next_tok;
 } Token;
 
@@ -28,18 +29,6 @@ typedef struct Token
 //     size_t c2 = strcspn(_cptr, _cstr2);
 //     return (c1 < c2) ? c1 : c2;
 // }
-
-Token *create_token(char *_src, size_t _bytes_to_read)
-{
-    Token *new_tok = malloc(sizeof(Token));
-
-    if (!new_tok)
-        perroex("couldn't allocate memory for a new token");
-
-    memset(new_tok, 0, sizeof(Token));
-
-    return new_tok;
-}
 
 // ===-------------------------------------------=== lex
 Token *lex(char *_src)
@@ -61,7 +50,6 @@ Token *lex(char *_src)
             end++;
 
         printf("lexed: %.*s\n", end - beg, beg);
-        // tok_list = create_token(beg, end - beg);
 
         beg = end;
     }
