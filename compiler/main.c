@@ -1,3 +1,14 @@
+/*
+    Table of contents:
+    - INCLUDES
+    - GLOBAL VARS
+    - STRUCTS
+    - helpers
+    - lexer
+    - parser
+    - main
+*/
+
 // ===-------------------------------------------=== INCLUDES
 #include "file_handler.c"
 
@@ -6,21 +17,20 @@ static const char *whitespace = " \r\n";
 static const char *delimiters = " \r\n(){}[]+-/*=,.;";
 
 // ===-------------------------------------------=== STRUCTS
-typedef enum TokenType
+typedef enum token_t
 {
-    tok_undefined,
-    tok_keyword,
-    tok_identifier,
-    tok_literal,
-    tok_punctuation,
-    tok_delimeter
-} TokenType;
+    undefined,
+    keyword,
+    identifier,
+    literal,
+    punctuation
+} token_t;
 
 typedef struct Token
 {
     char *lexeme;
-    TokenType type;
-    struct Token *next_tok;
+    token_t type;
+    struct Token *next;
 } Token;
 
 // size_t min_strcspn(char *_cptr, const char *_cstr1, const char *_cstr2)
@@ -30,13 +40,42 @@ typedef struct Token
 //     return (c1 < c2) ? c1 : c2;
 // }
 
-// ===-------------------------------------------=== lex
+// ===-------------------------------------------=== helpers
+char *assign_lexeme(const char *_src, size_t _src_size) {
+    char *lexeme = (char *)malloc(_src_size);
+    memcpy(lexeme, _src, _src_size);
+    *(lexeme + _src_size) = '\0'; 
+    return lexeme;
+}
+
+token_t deduce_token_type(const char *_lexeme) 
+{
+    //todo
+    return undefined;
+}
+
+Token *create_token(char *_src, size_t _src_size)
+{
+
+    Token *new_tok = calloc(1, sizeof(Token));
+
+    if (!new_tok) perroex("couldn't allocate memory for a new token");
+
+    new_tok->lexeme = assign_lexeme((const char *) _src, _src_size);
+  
+    new_tok->type = deduce_token_type((const char *) new_tok->lexeme);
+
+    return new_tok;
+}
+
+
+// ===-------------------------------------------=== lexer
 Token *lex(char *_src)
 {
     char *beg = _src;
     char *end = _src;
-
-    Token *tok_list, *head = tok_list;
+    
+    Token *head_node = NULL, *current_node = NULL;
 
     while (*end != '\0')
     {
@@ -49,37 +88,48 @@ Token *lex(char *_src)
         if (end - beg == 0)
             end++;
 
-        printf("lexed: %.*s\n", end - beg, beg);
+        if (!head_node) { 
+            head_node = create_token(beg, end - beg);
+            current_node = head_node;
+        } else {
+            current_node->next = create_token(beg, end - beg); 
+            current_node = current_node->next;
+        }
 
         beg = end;
     }
 
-    return head;
+    return head_node;
 }
 
-// ===-------------------------------------------=== parse_expr
+// ===-------------------------------------------=== parser
 void parse_expr(char *_fpath)
 {
     char *buff = readf_2buff(_fpath);
     Token *tok_list = lex(buff);
+    while (tok_list) {printf("tok: %s of type: %d\n", tok_list->lexeme, tok_list->type); tok_list = tok_list->next;}
 }
+
 
 void get_flags(const int _flagc, const char **flagv)
 {
 
     for (int i = 0; i < _flagc; ++i)
-    {        
-        if (!strcmp(flagv[i], "--lean-ron")) print_lean_ronin();
-        else if (!strcmp(flagv[i], "--uni-ron")) print_universal_ronin();
+    {
+        if (!strcmp(flagv[i], "--lean-ron"))
+            print_lean_ronin();
+        else if (!strcmp(flagv[i], "--uni-ron"))
+            print_universal_ronin();
     }
 }
 
 // ===-------------------------------------------=== main
 int main(int argc, char **argv)
 {
-    if (argc > 2) get_flags(argc - 2, (const char **)(argv + 2));
-    
+    if (argc > 2)
+        get_flags(argc - 2, (const char **)(argv + 2));
+
     parse_expr(argv[1]);
-    
+
     return 0;
 }
