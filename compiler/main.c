@@ -10,6 +10,7 @@
 */
 
 // ===-------------------------------------------=== INCLUDES
+#include <ctype.h>
 #include "file_handler.c"
 
 // ===-------------------------------------------=== GLOBAL VARS
@@ -48,12 +49,6 @@ char *assign_lexeme(const char *_src, size_t _src_size) {
     return lexeme;
 }
 
-token_t deduce_token_type(const char *_lexeme) 
-{
-    //todo
-    return undefined;
-}
-
 Token *create_token(char *_src, size_t _src_size)
 {
 
@@ -62,8 +57,6 @@ Token *create_token(char *_src, size_t _src_size)
     if (!new_tok) perroex("couldn't allocate memory for a new token");
 
     new_tok->lexeme = assign_lexeme((const char *) _src, _src_size);
-  
-    new_tok->type = deduce_token_type((const char *) new_tok->lexeme);
 
     return new_tok;
 }
@@ -86,12 +79,16 @@ Token *lex(char *_src)
         end = beg + strcspn(beg, delimiters);
 
         if (end - beg == 0)
+        {
             end++;
+        }
 
-        if (!head_node) { 
+        if (!head_node) 
+        { 
             head_node = create_token(beg, end - beg);
             current_node = head_node;
-        } else {
+        } else 
+        {
             current_node->next = create_token(beg, end - beg); 
             current_node = current_node->next;
         }
@@ -103,15 +100,15 @@ Token *lex(char *_src)
 }
 
 // ===-------------------------------------------=== parser
-void parse_expr(char *_fpath)
+void init_scanner(char *_fpath)
 {
     char *buff = readf_2buff(_fpath);
     Token *tok_list = lex(buff);
-    while (tok_list) {printf("tok: %s of type: %d\n", tok_list->lexeme, tok_list->type); tok_list = tok_list->next;}
+    while (tok_list) { puts(tok_list->lexeme); tok_list = tok_list->next;}
 }
 
 
-void get_flags(const int _flagc, const char **flagv)
+void get_command_flags(const int _flagc, const char **flagv)
 {
 
     for (int i = 0; i < _flagc; ++i)
@@ -127,9 +124,9 @@ void get_flags(const int _flagc, const char **flagv)
 int main(int argc, char **argv)
 {
     if (argc > 2)
-        get_flags(argc - 2, (const char **)(argv + 2));
+        get_command_flags(argc - 2, (const char **)(argv + 2));
 
-    parse_expr(argv[1]);
+    init_scanner(argv[1]);
 
     return 0;
 }
