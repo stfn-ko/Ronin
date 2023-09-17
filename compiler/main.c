@@ -107,25 +107,9 @@ void init_scanner(char *_fpath)
     while (tok_list) { puts(tok_list->lexeme); tok_list = tok_list->next;}
 }
 
-
-void get_command_flags(const int _flagc, const char **flagv)
-{
-
-    for (int i = 0; i < _flagc; ++i)
-    {
-        if (!strcmp(flagv[i], "--lean-ron"))
-            print_lean_ronin();
-        else if (!strcmp(flagv[i], "--uni-ron"))
-            print_universal_ronin();
-    }
-}
-
 // ===-------------------------------------------=== main
 int main(int argc, char **argv)
 {
-    if (argc > 2)
-        get_command_flags(argc - 2, (const char **)(argv + 2));
-
     init_scanner(argv[1]);
 
     return 0;
