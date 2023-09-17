@@ -70,28 +70,3 @@
 
 // Reset
 #define Reset "\e[0m"
-
-void print_lean_ronin()
-{
-    puts("\n\n" BHI_Green);
-    puts("\t\t    _/_/_/                        _/        ");
-    puts("\t\t   _/    _/    _/_/    _/_/_/        _/_/_/ ");
-    puts("\t\t  _/_/_/    _/    _/  _/    _/  _/  _/    _/");
-    puts("\t\t _/    _/  _/    _/  _/    _/  _/  _/    _/ ");
-    puts("\t\t_/    _/    _/_/    _/    _/  _/  _/    _/  ");
-    puts("\n\n" Reset);
-}
-
-void print_universal_ronin()
-{
-    puts("\n\n" BHI_Green);
-    puts("\t\t88888888ba                            88               ");
-    puts("\t\t88      \"8b                           \"\"               ");
-    puts("\t\t88      ,8P                                            ");
-    puts("\t\t88aaaaaa8P'  ,adPPYba,   8b,dPPYba,   88  8b,dPPYba,   ");
-    puts("\t\t88\"\"\"\"88'   a8\"     \"8a  88P'   `\"8a  88  88P'   `\"8a  ");
-    puts("\t\t88    `8b   8b       d8  88       88  88  88       88  ");
-    puts("\t\t88     `8b  \"8a,   ,a8\"  88       88  88  88       88  ");
-    puts("\t\t88      `8b  `\"YbbdP\"'   88       88  88  88       88  ");
-    puts("\n\n" Reset);
-}
