@@ -100,7 +100,7 @@ Token *lex(char *_src)
 }
 
 // ===-------------------------------------------=== parser
-void init_scanner(char *_fpath)
+void parse(char *_fpath)
 {
     char *buff = readf_2buff(_fpath);
     Token *tok_list = lex(buff);
@@ -110,7 +110,7 @@ void init_scanner(char *_fpath)
 // ===-------------------------------------------=== main
 int main(int argc, char **argv)
 {
-    init_scanner(argv[1]);
+    parse(argv[1]);
 
     return 0;
 }
