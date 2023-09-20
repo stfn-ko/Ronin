@@ -67,7 +67,8 @@ Lexme *new_lexeme(const char *_src, size_t _src_size)
     memcpy(new_lxm->val, _src, _src_size);
     *(new_lxm->val + _src_size) = '\0';
     new_lxm->len = _src_size;
-    
+
+    todo_err("initialize row and ln", FL);
     new_lxm->row = 0;
     new_lxm->ln = 0;
 
