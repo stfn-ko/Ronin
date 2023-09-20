@@ -15,7 +15,7 @@
 
 // ===-------------------------------------------=== GLOBAL VARS
 static const char *whitespace = " \r\n";
-static const char *delimiters = " \r\n(){}[]+-/*=,.;";
+static const char *delimiters = " \r\n(){}[]+-/*=,.;:\"\'";
 
 // ===-------------------------------------------=== STRUCTS
 typedef enum token_t
@@ -27,9 +27,17 @@ typedef enum token_t
     punctuation
 } token_t;
 
+typedef struct Lexme
+{
+    char *val;
+    size_t ln;
+    size_t row;
+    size_t len;
+} Lexme;
+
 typedef struct Token
 {
-    char *lexeme;
+    Lexme *lxm;
     token_t type;
     struct Token *next;
 } Token;
@@ -42,38 +50,56 @@ typedef struct Token
 // }
 
 // ===-------------------------------------------=== helpers
-char *assign_lexeme(const char *_src, size_t _src_size) {
-    char *lexeme = (char *)malloc(_src_size);
-    memcpy(lexeme, _src, _src_size);
-    *(lexeme + _src_size) = '\0'; 
-    return lexeme;
+Lexme *new_lexeme(const char *_src, size_t _src_size)
+{
+    Lexme *new_lxm = calloc(1, sizeof(Lexme));
+    if (!new_lxm)
+    {
+        err_ex_p("couldn't allocate memory for a new lexeme", FL);
+    }
+
+    new_lxm->val = (char *)malloc(_src_size);
+    if (!new_lxm->val)
+    {
+        err_ex_p("couldn't allocate memory for lexeme initialization", FL);
+    }
+
+    memcpy(new_lxm->val, _src, _src_size);
+    *(new_lxm->val + _src_size) = '\0';
+    new_lxm->len = _src_size;
+    
+    err_ex_p("here", FL);
+    new_lxm->row = 0;
+    new_lxm->ln = 0;
+
+    return new_lxm;
 }
 
-Token *create_token(char *_src, size_t _src_size)
+Token *new_token(char *_src, size_t _src_size)
 {
-
     Token *new_tok = calloc(1, sizeof(Token));
+    if (!new_tok)
+    {
+        err_ex_p("couldn't allocate memory for a new token", FL);
+    }
 
-    if (!new_tok) perroex("couldn't allocate memory for a new token");
-
-    new_tok->lexeme = assign_lexeme((const char *) _src, _src_size);
+    new_tok->lxm = new_lexeme((const char *)_src, _src_size);
 
     return new_tok;
 }
-
 
 // ===-------------------------------------------=== lexer
 Token *lex(char *_src)
 {
     char *beg = _src;
     char *end = _src;
-    
+
     Token *head_node = NULL, *current_node = NULL;
 
     while (*end != '\0')
     {
         if (!_src || !beg || !end)
-            perroex("can't lex an empty source");
+            err_ex_p("can't lex an empty source", FL);
 
         beg += strspn(beg, whitespace);
         end = beg + strcspn(beg, delimiters);
@@ -83,13 +109,14 @@ Token *lex(char *_src)
             end++;
         }
 
-        if (!head_node) 
-        { 
-            head_node = create_token(beg, end - beg);
-            current_node = head_node;
-        } else 
+        if (!head_node)
         {
-            current_node->next = create_token(beg, end - beg); 
+            head_node = new_token(beg, end - beg);
+            current_node = head_node;
+        }
+        else
+        {
+            current_node->next = new_token(beg, end - beg);
             current_node = current_node->next;
         }
 
@@ -104,7 +131,11 @@ void parse(char *_fpath)
 {
     char *buff = readf_2buff(_fpath);
     Token *tok_list = lex(buff);
-    while (tok_list) { puts(tok_list->lexeme); tok_list = tok_list->next;}
+    while (tok_list)
+    {
+        puts(tok_list->lxm->val);
+        tok_list = tok_list->next;
+    }
 }
 
 // ===-------------------------------------------=== main
