@@ -1,7 +1,5 @@
 // ===-------------------------------------------=== INCLUDES
 #include <stdlib.h>
-#include <assert.h>
-#include <stdarg.h>
 #include <string.h>
 #include "ANSI.h"
 
