@@ -28,49 +28,42 @@ typedef enum token_t
     punctuation
 } token_t;
 
-typedef struct Lexme
+typedef struct Lexeme
 {
-    char *val;
+    char *txt;
     size_t ln;
-    size_t row;
+    size_t col;
     size_t len;
-} Lexme;
+} Lexeme;
 
 typedef struct Token
 {
-    Lexme *lxm;
+    Lexeme *lxm;
     token_t type;
     struct Token *next;
 } Token;
 
-// size_t min_strcspn(char *_cptr, const char *_cstr1, const char *_cstr2)
-// {
-//     size_t c1 = strcspn(_cptr, _cstr1);
-//     size_t c2 = strcspn(_cptr, _cstr2);
-//     return (c1 < c2) ? c1 : c2;
-// }
-
 // ===-------------------------------------------=== helpers
-Lexme *new_lexeme(const char *_src, size_t _src_size)
+Lexeme *new_lexeme(const char *_src, size_t _src_size)
 {
-    Lexme *new_lxm = calloc(1, sizeof(Lexme));
+    Lexeme *new_lxm = calloc(1, sizeof(Lexeme));
     if (!new_lxm)
     {
         err_ex_p("couldn't allocate memory for a new lexeme", FL);
     }
 
-    new_lxm->val = (char *)malloc(_src_size);
-    if (!new_lxm->val)
+    new_lxm->txt = (char *)malloc(_src_size);
+    if (!new_lxm->txt)
     {
         err_ex_p("couldn't allocate memory for lexeme initialization", FL);
     }
 
-    memcpy(new_lxm->val, _src, _src_size);
-    *(new_lxm->val + _src_size) = '\0';
+    memcpy(new_lxm->txt, _src, _src_size);
+    *(new_lxm->txt + _src_size) = '\0';
     new_lxm->len = _src_size;
 
-    // todo_err("initialize row and ln", FL);
-    new_lxm->row = 0;
+    // todo_err("initialize col and ln", FL);
+    new_lxm->col = 0;
     new_lxm->ln = 0;
 
     return new_lxm;
@@ -89,7 +82,7 @@ Token *new_token(char *_src, size_t _src_size)
     return new_tok;
 }
 
-void parse_string(char **_b, char **_e)
+void get_string(char **_b, char **_e)
 {
     *_e = *_b + 1;
 
@@ -104,7 +97,7 @@ void parse_string(char **_b, char **_e)
     *_e = *_e + len;
 }
 
-void parse_char(char **_b, char **_e)
+void get_char(char **_b, char **_e)
 {
     *_e = *_b + 1;
 
@@ -141,11 +134,11 @@ Token *lex(char *_src)
 
         if (*beg == '\"')
         {
-            parse_string(&beg, &end);
+            get_string(&beg, &end);
         }
         else if (*beg == '\'')
         {
-            parse_char(&beg, &end);
+            get_char(&beg, &end);
         }
         else
         {
@@ -181,7 +174,7 @@ void parse(char *_fpath)
     Token *tok_list = lex(buff);
     while (tok_list)
     {
-        puts(tok_list->lxm->val);
+        puts(tok_list->lxm->txt);
         tok_list = tok_list->next;
     }
 }
