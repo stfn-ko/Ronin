@@ -2,8 +2,10 @@ i32 main () {
     i32/rw x = 10;
     i32/r y = 13;
     x = 10;
-
-    "//let's talk about floats and scanner:"
+    
+    str/r s = "hello world";
+    char/r c = '\h';
+    
     f64/r z = 3.141592653589;
 
     return x;
