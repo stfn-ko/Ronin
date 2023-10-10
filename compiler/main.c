@@ -11,11 +11,12 @@
 
 // ===-------------------------------------------=== INCLUDES
 #include <ctype.h>
+#include <stdint.h>
 #include "file_handler.c"
 
 // ===-------------------------------------------=== GLOBAL VARS
 static const char *whitespace = " \r\n";
-static const char *delimiters = " \r\n(){}[]+-/*=,.;:\"\'";
+static const char *delimiters = " \r\n(){}[]+-/*=,.;:";
 
 // ===-------------------------------------------=== STRUCTS
 typedef enum token_t
@@ -68,7 +69,7 @@ Lexme *new_lexeme(const char *_src, size_t _src_size)
     *(new_lxm->val + _src_size) = '\0';
     new_lxm->len = _src_size;
 
-    todo_err("initialize row and ln", FL);
+    // todo_err("initialize row and ln", FL);
     new_lxm->row = 0;
     new_lxm->ln = 0;
 
@@ -88,6 +89,41 @@ Token *new_token(char *_src, size_t _src_size)
     return new_tok;
 }
 
+void parse_string(char **_b, char **_e)
+{
+    *_e = *_b + 1;
+
+    int32_t len = strcspn(*_e, "\"") + 1;
+    if (len == strlen(*_b))
+    {
+        err_ex_p("string is missing a closing sign", FL);
+    }
+
+    // TODO: substitute special characters
+
+    *_e = *_e + len;
+}
+
+void parse_char(char **_b, char **_e)
+{
+    *_e = *_b + 1;
+
+    int32_t len = strcspn(*_e, "\'") + 1;
+
+    // TODO: substitute special characters
+
+    if (len == strlen(*_b))
+    {
+        err_ex_p("char is missing a closing sign", FL);
+    }
+    if (len > 3)
+    {
+        err_ex_p("char overflow", FL);
+    }
+
+    *_e = *_e + len;
+}
+
 // ===-------------------------------------------=== lexer
 Token *lex(char *_src)
 {
@@ -102,7 +138,19 @@ Token *lex(char *_src)
             err_ex_p("can't lex an empty source", FL);
 
         beg += strspn(beg, whitespace);
-        end = beg + strcspn(beg, delimiters);
+
+        if (*beg == '\"')
+        {
+            parse_string(&beg, &end);
+        }
+        else if (*beg == '\'')
+        {
+            parse_char(&beg, &end);
+        }
+        else
+        {
+            end = beg + strcspn(beg, delimiters);
+        }
 
         if (end - beg == 0)
         {
