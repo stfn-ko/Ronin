@@ -69,7 +69,7 @@ Lexeme *new_lexeme(const char *_src, size_t _src_size)
     return new_lxm;
 }
 
-Token *new_token(char *_src, size_t _src_size)
+Token *new_token(const char *_src, size_t _src_size)
 {
     Token *new_tok = calloc(1, sizeof(Token));
     if (!new_tok)
@@ -77,12 +77,12 @@ Token *new_token(char *_src, size_t _src_size)
         err_ex_p("couldn't allocate memory for a new token", FL);
     }
 
-    new_tok->lxm = new_lexeme((const char *)_src, _src_size);
+    new_tok->lxm = new_lexeme(_src, _src_size);
 
     return new_tok;
 }
 
-void get_string(char **_b, char **_e)
+void get_string(const char **_b, const char **_e)
 {
     *_e = *_b + 1;
 
@@ -97,7 +97,7 @@ void get_string(char **_b, char **_e)
     *_e = *_e + len;
 }
 
-void get_char(char **_b, char **_e)
+void get_char(const char **_b, const char **_e)
 {
     *_e = *_b + 1;
 
@@ -117,61 +117,96 @@ void get_char(char **_b, char **_e)
     *_e = *_e + len;
 }
 
-// ===-------------------------------------------=== lexer
-Token *lex(char *_src)
+void push_back_token(Token **_head, Token **_tail, const char **_beg, const char **_end)
 {
-    char *beg = _src;
-    char *end = _src;
+    if (!*_head)
+    {
+        *_head = new_token(*_beg, *_end - *_beg);
+        *_tail = *_head;
+    }
+    else
+    {
+        (*_tail)->next = new_token(*_beg, *_end - *_beg);
+        *_tail = (*_tail)->next;
+    }
+}
 
-    Token *head_node = NULL, *current_node = NULL;
+void skip_white_space(const char **_b, uint32_t *_ln)
+{
+    while (**_b == ' ' || **_b == '\t' || **_b == '\r' || **_b == '\n')
+    {
+        if (**_b == '\n')
+        {
+            (*_ln)++;
+        }
+
+        if (**_b == '\0')
+        {
+            return;
+        }
+
+        (*_b)++;
+    }
+}
+
+void match(const char **_b, const char **_e)
+{
+    if (**_b == '\"')
+    {
+        get_string(_b, _e);
+        return;
+    }
+    else if (**_b == '\'')
+    {
+        get_char(_b, _e);
+        return;
+    }
+    else
+    {
+        *_e = *_b + strcspn(*_b, delimiters);
+    }
+
+    if ((*_e) - (*_b) == 0)
+    {
+        ++(*_e);
+    }
+}
+
+// ===-------------------------------------------=== lexer
+Token *lex(char **_src)
+{   
+    const char *beg = *_src, *end = *_src;
+    Token *head = NULL, *tail = NULL;
+    uint32_t ln = 1;
 
     while (*end != '\0')
     {
-        if (!_src || !beg || !end)
+        if (!*_src || !beg || !end)
+        {
             err_ex_p("can't lex an empty source", FL);
-
-        beg += strspn(beg, whitespace);
-
-        if (*beg == '\"')
-        {
-            get_string(&beg, &end);
-        }
-        else if (*beg == '\'')
-        {
-            get_char(&beg, &end);
-        }
-        else
-        {
-            end = beg + strcspn(beg, delimiters);
         }
 
-        if (end - beg == 0)
-        {
-            end++;
-        }
-
-        if (!head_node)
-        {
-            head_node = new_token(beg, end - beg);
-            current_node = head_node;
-        }
-        else
-        {
-            current_node->next = new_token(beg, end - beg);
-            current_node = current_node->next;
-        }
-
+        skip_white_space(&beg, &ln);
+        match(&beg, &end);
+        push_back_token(&head, &tail, &beg, &end);
         beg = end;
     }
 
-    return head_node;
+    if (*_src)
+    {
+        free(*_src);
+        *_src = NULL;
+    }
+
+    return head;
 }
 
 // ===-------------------------------------------=== parser
 void parse(char *_fpath)
 {
     char *buff = readf_2buff(_fpath);
-    Token *tok_list = lex(buff);
+    Token *tok_list = lex(&buff); // frees buff
+
     while (tok_list)
     {
         puts(tok_list->lxm->txt);
@@ -183,6 +218,5 @@ void parse(char *_fpath)
 int main(int argc, char **argv)
 {
     parse(argv[1]);
-
     return 0;
 }
