@@ -10,7 +10,6 @@
 */
 
 // ===-------------------------------------------=== INCLUDES
-#include <ctype.h>
 #include <stdint.h>
 #include "file_handler.c"
 
@@ -62,10 +61,6 @@ Lexeme *new_lexeme(const char *const *_src, size_t _src_size)
     *(new_lxm->txt + _src_size) = '\0';
     new_lxm->len = _src_size;
 
-    // todo_err("initialize col and ln", FL);
-    new_lxm->col = 0;
-    new_lxm->ln = 0;
-
     return new_lxm;
 }
 
@@ -82,30 +77,30 @@ Token *new_token(const char *const *_src, size_t _src_size)
     return new_tok;
 }
 
-void get_string(const char *const *_b, const char **_e)
+void get_string(const char *const *_beg, const char **_end)
 {
-    *_e = *_b + 1;
+    *_end = *_beg + 1;
 
-    int32_t len = strcspn(*_e, "\"") + 1;
-    if (len == strlen(*_b))
+    int32_t len = strcspn(*_end, "\"") + 1;
+    if (len == strlen(*_beg))
     {
         err_ex_p("string is missing a closing sign", FL);
     }
 
     // TODO: substitute special characters
 
-    *_e = *_e + len;
+    *_end = *_end + len;
 }
 
-void get_char(const char *const *_b, const char **_e)
+void get_char(const char *const *_beg, const char **_end)
 {
-    *_e = *_b + 1;
+    *_end = *_beg + 1;
 
-    int32_t len = strcspn(*_e, "\'") + 1;
+    int32_t len = strcspn(*_end, "\'") + 1;
 
     // TODO: substitute special characters
 
-    if (len == strlen(*_b))
+    if (len == strlen(*_beg))
     {
         err_ex_p("char is missing a closing sign", FL);
     }
@@ -114,7 +109,7 @@ void get_char(const char *const *_b, const char **_e)
         err_ex_p("char overflow", FL);
     }
 
-    *_e = *_e + len;
+    *_end = *_end + len;
 }
 
 void push_back_token(Token **_head, Token **_tail, const char *const *_beg, const char *const *_end)
@@ -131,53 +126,54 @@ void push_back_token(Token **_head, Token **_tail, const char *const *_beg, cons
     }
 }
 
-void skip_white_space(const char **_b, uint32_t *_ln)
+void skip_white_space(const char **_beg, uint16_t *_ln, const char **_col)
 {
-    while (**_b == ' ' || **_b == '\t' || **_b == '\r' || **_b == '\n')
+    while (**_beg == ' ' || **_beg == '\t' || **_beg == '\r' || **_beg == '\n')
     {
-        if (**_b == '\n')
+        if (**_beg == '\n')
         {
             (*_ln)++;
+            (*_col) = (*_beg) + 1;
         }
 
-        if (**_b == '\0')
+        if (**_beg == '\0')
         {
             return;
         }
 
-        (*_b)++;
+        (*_beg)++;
     }
 }
 
-void match(const char **_b, const char **_e)
+void match(const char **_beg, const char **_end)
 {
-    if (**_b == '\"')
+    if (**_beg == '\"')
     {
-        get_string(_b, _e);
+        get_string(_beg, _end);
         return;
     }
-    else if (**_b == '\'')
+    else if (**_beg == '\'')
     {
-        get_char(_b, _e);
+        get_char(_beg, _end);
         return;
     }
     else
     {
-        *_e = *_b + strcspn(*_b, delimiters);
+        *_end = *_beg + strcspn(*_beg, delimiters);
     }
 
-    if ((*_e) - (*_b) == 0)
+    if ((*_end) - (*_beg) == 0)
     {
-        ++(*_e);
+        ++(*_end);
     }
 }
 
 // ===-------------------------------------------=== lexer
 Token *lex(char **_src)
-{   
-    const char *beg = *_src, *end = *_src;
+{
+    const char *beg = *_src, *end = *_src, *col = *_src;
     Token *head = NULL, *tail = NULL;
-    uint32_t ln = 1;
+    uint16_t ln = 1;
 
     while (*end != '\0')
     {
@@ -186,9 +182,15 @@ Token *lex(char **_src)
             err_ex_p("can't lex an empty source", FL);
         }
 
-        skip_white_space(&beg, &ln);
+        skip_white_space(&beg, &ln, &col);
+
         match(&beg, &end);
+
         push_back_token(&head, &tail, &beg, &end);
+
+        tail->lxm->ln = ln;
+        tail->lxm->col = beg - col;
+
         beg = end;
     }
 
@@ -206,10 +208,9 @@ void parse(char *_fpath)
 {
     char *buff = readf_2buff(_fpath);
     Token *tok_list = lex(&buff); // frees buff
-
     while (tok_list)
     {
-        puts(tok_list->lxm->txt);
+        printf("ln: %d | col: %d | len: %d | type: %d\n%s\n\n", tok_list->lxm->ln, tok_list->lxm->col, tok_list->lxm->len, tok_list->type, tok_list->lxm->txt);
         tok_list = tok_list->next;
     }
 }
