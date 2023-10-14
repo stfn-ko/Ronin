@@ -44,7 +44,7 @@ typedef struct Token
 } Token;
 
 // ===-------------------------------------------=== helpers
-Lexeme *new_lexeme(const char *_src, size_t _src_size)
+Lexeme *new_lexeme(const char *const *_src, size_t _src_size)
 {
     Lexeme *new_lxm = calloc(1, sizeof(Lexeme));
     if (!new_lxm)
@@ -58,7 +58,7 @@ Lexeme *new_lexeme(const char *_src, size_t _src_size)
         err_ex_p("couldn't allocate memory for lexeme initialization", FL);
     }
 
-    memcpy(new_lxm->txt, _src, _src_size);
+    memcpy(new_lxm->txt, *_src, _src_size);
     *(new_lxm->txt + _src_size) = '\0';
     new_lxm->len = _src_size;
 
@@ -69,7 +69,7 @@ Lexeme *new_lexeme(const char *_src, size_t _src_size)
     return new_lxm;
 }
 
-Token *new_token(const char *_src, size_t _src_size)
+Token *new_token(const char *const *_src, size_t _src_size)
 {
     Token *new_tok = calloc(1, sizeof(Token));
     if (!new_tok)
@@ -82,7 +82,7 @@ Token *new_token(const char *_src, size_t _src_size)
     return new_tok;
 }
 
-void get_string(const char **_b, const char **_e)
+void get_string(const char *const *_b, const char **_e)
 {
     *_e = *_b + 1;
 
@@ -97,7 +97,7 @@ void get_string(const char **_b, const char **_e)
     *_e = *_e + len;
 }
 
-void get_char(const char **_b, const char **_e)
+void get_char(const char *const *_b, const char **_e)
 {
     *_e = *_b + 1;
 
@@ -117,16 +117,16 @@ void get_char(const char **_b, const char **_e)
     *_e = *_e + len;
 }
 
-void push_back_token(Token **_head, Token **_tail, const char **_beg, const char **_end)
+void push_back_token(Token **_head, Token **_tail, const char *const *_beg, const char *const *_end)
 {
     if (!*_head)
     {
-        *_head = new_token(*_beg, *_end - *_beg);
+        *_head = new_token(_beg, *_end - *_beg);
         *_tail = *_head;
     }
     else
     {
-        (*_tail)->next = new_token(*_beg, *_end - *_beg);
+        (*_tail)->next = new_token(_beg, *_end - *_beg);
         *_tail = (*_tail)->next;
     }
 }
