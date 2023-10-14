@@ -10,7 +10,6 @@
 */
 
 // ===-------------------------------------------=== INCLUDES
-#include <stdint.h>
 #include "file_handler.c"
 
 // ===-------------------------------------------=== GLOBAL VARS
@@ -18,6 +17,12 @@ static const char *whitespace = " \r\n";
 static const char *delimiters = " \r\n(){}[]+-/*=,.;:";
 
 // ===-------------------------------------------=== STRUCTS
+struct Scope {
+    const char *path;
+    uint32_t ln;
+    uint32_t col;
+} Scope = {NULL, 0, 0};
+
 typedef enum token_t
 {
     undefined,
@@ -30,9 +35,9 @@ typedef enum token_t
 typedef struct Lexeme
 {
     char *txt;
-    size_t ln;
-    size_t col;
-    size_t len;
+    uint32_t ln;
+    uint32_t col;
+    uint32_t len;
 } Lexeme;
 
 typedef struct Token
@@ -43,7 +48,7 @@ typedef struct Token
 } Token;
 
 // ===-------------------------------------------=== helpers
-Lexeme *new_lexeme(const char *const *_src, size_t _src_size)
+Lexeme *new_lexeme(const char *const *_src, uint32_t _src_size)
 {
     Lexeme *new_lxm = calloc(1, sizeof(Lexeme));
     if (!new_lxm)
@@ -64,7 +69,7 @@ Lexeme *new_lexeme(const char *const *_src, size_t _src_size)
     return new_lxm;
 }
 
-Token *new_token(const char *const *_src, size_t _src_size)
+Token *new_token(const char *const *_src, uint32_t _src_size)
 {
     Token *new_tok = calloc(1, sizeof(Token));
     if (!new_tok)
@@ -84,7 +89,7 @@ void get_string(const char *const *_beg, const char **_end)
     int32_t len = strcspn(*_end, "\"") + 1;
     if (len == strlen(*_beg))
     {
-        err_ex_p("string is missing a closing sign", FL);
+        err_ex_p("string is missing a closing sign", Scope.path, Scope.ln);
     }
 
     // TODO: substitute special characters
@@ -102,11 +107,11 @@ void get_char(const char *const *_beg, const char **_end)
 
     if (len == strlen(*_beg))
     {
-        err_ex_p("char is missing a closing sign", FL);
+        err_ex_p("char is missing a closing sign", Scope.path, Scope.ln);
     }
     if (len > 3)
     {
-        err_ex_p("char overflow", FL);
+        err_ex_p("char overflow", Scope.path, Scope.ln);
     }
 
     *_end = *_end + len;
@@ -179,7 +184,7 @@ Token *lex(char **_src)
     {
         if (!*_src || !beg || !end)
         {
-            err_ex_p("can't lex an empty source", FL);
+            err_ex_p("can't lex an empty source", Scope.path, Scope.ln);
         }
 
         skip_white_space(&beg, &ln, &col);
@@ -190,6 +195,9 @@ Token *lex(char **_src)
 
         tail->lxm->ln = ln;
         tail->lxm->col = beg - col;
+        
+        Scope.ln = ln;
+        Scope.col = beg - col;
 
         beg = end;
     }
@@ -206,6 +214,8 @@ Token *lex(char **_src)
 // ===-------------------------------------------=== parser
 void parse(char *_fpath)
 {
+    Scope.path = _fpath;
+
     char *buff = readf_2buff(_fpath);
     Token *tok_list = lex(&buff); // frees buff
     while (tok_list)
