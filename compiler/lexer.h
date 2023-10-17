@@ -2,7 +2,7 @@
 #define LEXER_H
 
 //  ===-------------------------------------------=== INCLUDES
-#include "file_handler.c"
+#include "file_handler.h"
 
 //  ===-------------------------------------------=== GLOBAL VARS
 static const char *whitespace = " \r\n";
