@@ -1,8 +1,5 @@
 // ===-------------------------------------------=== INCLUDES
-#include <stdio.h>
 #include "error_handler.c"
-
-#define FL __FILE__, __LINE__
 
 // ===-------------------------------------------=== readf_2buff
 char *readf_2buff(char *_fpath)
