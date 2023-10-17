@@ -1,7 +1,14 @@
-// ===-------------------------------------------=== INCLUDES
-#include "error_handler.c"
+#ifndef FILE_HANDLER_H
+#define FILE_HANDLER_H
 
-// ===-------------------------------------------=== readf_2buff
+// ===-------------------------------------------=== INCLUDES
+#include "error_handler.h"
+
+//  ===-------------------------------------------=== FUNC DEC
+//  ***---------------------*** NON-VOID FUNCS
+char *readf_2buff(char *_fpath);
+
+//  ===-------------------------------------------=== FUNC DEF
 char *readf_2buff(char *_fpath)
 {
     if (!_fpath)
@@ -41,3 +48,5 @@ char *readf_2buff(char *_fpath)
 
     return buff;
 }
+
+#endif
