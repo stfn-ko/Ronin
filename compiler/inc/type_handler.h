@@ -1,11 +1,12 @@
-#ifndef LEXER_H
-#define LEXER_H
+#ifndef TYPE_HANDLER_H
+#define TYPE_HANDLER_H
 
-#include "file_handler.h"
+#include <stdlib.h>
+#include <string.h>
 
 typedef enum token_t
 {
-    undefined,
+    undefined = 0,
 
     // KEYWORD - PERMISSIONS - READ-ONLY
     KW_READ_ONLY,          // /r
@@ -109,26 +110,11 @@ typedef enum token_t
     DELIM_SQ_BRACES,  // []
     DELIM_CUR_BRACES, // {}
 
+    // ENUM SIZE
+    _size_
 } token_t;
 
-typedef struct Lexeme
-{
-    char *txt;
-    size_t ln;
-    size_t col;
-    size_t len;
-} Lexeme;
-
-typedef struct Token
-{
-    Lexeme *lxm;
-    token_t type;
-    struct Token *next;
-} Token;
-
-Lexeme *new_lexeme(const char *const *_src, size_t _src_size);
-Token *new_token(const char *const *_src, size_t _src_size);
-Token *lex(char **_src);
-void parse(char *_fpath);
+size_t str_cmp(const char *_str1, const char *_str2);
+token_t deduce_tok_type(const char **_lxm);
 
 #endif
