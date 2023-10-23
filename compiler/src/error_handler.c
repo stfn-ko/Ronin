@@ -1,9 +1,9 @@
-#include "error_handler.h"
+#include "../inc/error_handler.h"
 
 #define EXIT_TODO 10
 #define EXIT_CRITICAL 11
 
-void err_ex_p(const char *_err_msg, const char *__FILE, uint32_t __LINE)
+void err_ex_p(const char *_err_msg, const char *__FILE, size_t __LINE)
 {
     if (__LINE)
     {
@@ -17,7 +17,7 @@ void err_ex_p(const char *_err_msg, const char *__FILE, uint32_t __LINE)
     exit(EXIT_CRITICAL);
 }
 
-void todo_err(const char *_msg, const char *__FILE, uint32_t __LINE)
+void todo_err(const char *_msg, const char *__FILE, size_t __LINE)
 {
     printf(UL_Purple "\nTODO" Reset B_Purple " ( %s | ln:%d ) >>> " Reset "%s\n\n",
            __FILE, __LINE, _msg);

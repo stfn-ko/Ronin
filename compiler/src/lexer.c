@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "../inc/lexer.h"
 
 static const char *whitespace = " \r\n";
 static const char *delimiters = " \r\n(){}[]+-/*=,.;:";
@@ -11,8 +11,8 @@ struct Scope
 } Scope = {NULL, 0, 0};
 
 void push_back_token(Token **_head, Token **_tail, const char *const *_beg, const char *const *_end);
-void skip_white_space(const char **_beg, uint16_t *_ln, const char **_col);
-void skip_comments(const char **_beg, uint16_t *_ln, const char **_col);
+void skip_white_space(const char **_beg, size_t *_ln, const char **_col);
+void skip_comments(const char **_beg, size_t *_ln, const char **_col);
 void get_string(const char *const *_beg, const char **_end);
 void get_char(const char *const *_beg, const char **_end);
 void match(const char **_beg, const char **_end);
@@ -101,7 +101,7 @@ void push_back_token(Token **_head, Token **_tail, const char *const *_beg, cons
     }
 }
 
-void skip_comments(const char **_beg, uint16_t *_ln, const char **_col)
+void skip_comments(const char **_beg, size_t *_ln, const char **_col)
 {
     if (**_beg == '/' && *(*_beg + 1) == '/')
     {
@@ -114,7 +114,7 @@ void skip_comments(const char **_beg, uint16_t *_ln, const char **_col)
     }
 }
 
-void skip_white_space(const char **_beg, uint16_t *_ln, const char **_col)
+void skip_white_space(const char **_beg, size_t *_ln, const char **_col)
 {
     while (**_beg == ' ' || **_beg == '\t' || **_beg == '\r' || **_beg == '\n')
     {
@@ -158,21 +158,11 @@ void match(const char **_beg, const char **_end)
     }
 }
 
-void deduce_token_type(Token **_t)
-{
-    char * lexeme = (*_t)->lxm;
-    
-    if (lexeme == "i32")
-    {
-        (*_t)->type = KW_I32;
-    }  
-}
-
 Token *lex(char **_src)
 {
     const char *beg = *_src, *end = *_src, *col = *_src;
     Token *head = NULL, *tail = NULL;
-    uint16_t ln = 1;
+    size_t ln = 1;
 
     while (*end != '\0')
     {
@@ -187,7 +177,7 @@ Token *lex(char **_src)
 
         push_back_token(&head, &tail, &beg, &end);
 
-        deduce_token_type(&tail);
+        tail->type = deduce_tok_type((const char **)&tail->lxm->txt);
 
         tail->lxm->ln = ln;
         tail->lxm->col = beg - col;
