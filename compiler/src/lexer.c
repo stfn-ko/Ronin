@@ -10,6 +10,10 @@ struct Scope
     size_t col;
 } Scope = {NULL, 0, 0};
 
+/***********************************************************/
+/*                    PRIVATE FUNCTIONS                    */
+/***********************************************************/
+
 void push_back_token(Token **_head, Token **_tail, const char *const *_beg, const char *const *_end);
 void skip_white_space(const char **_beg, size_t *_ln, const char **_col);
 void skip_comments(const char **_beg, size_t *_ln, const char **_col);
@@ -17,6 +21,10 @@ void get_string(const char *const *_beg, const char **_end);
 void get_char(const char *const *_beg, const char **_end);
 void match(const char **_beg, const char **_end);
 void deduce_token_type(Token **_t);
+
+/***********************************************************/
+/*                    PUBLIC FUNCTIONS                     */
+/***********************************************************/
 
 Lexeme *new_lexeme(const char *const *_src, size_t _src_size)
 {
@@ -38,6 +46,76 @@ Lexeme *new_lexeme(const char *const *_src, size_t _src_size)
 
     return new_lxm;
 }
+
+Token *new_token(const char *const *_src, size_t _src_size)
+{
+    Token *new_tok = (Token *)calloc(1, sizeof(Token));
+    if (!new_tok)
+    {
+        err_ex_p("couldn't allocate memory for a new token", FL);
+    }
+
+    new_tok->lxm = new_lexeme(_src, _src_size);
+
+    return new_tok;
+}
+
+Token *lex(char **_src)
+{
+    const char *beg = *_src, *end = *_src, *col = *_src;
+    Token *head = NULL, *tail = NULL;
+    size_t ln = 1;
+
+    while (*end != '\0')
+    {
+        if (!*_src || !beg || !end)
+        {
+            err_ex_p("can't lex an empty source", Scope.path, Scope.ln);
+        }
+
+        skip_white_space(&beg, &ln, &col);
+
+        match(&beg, &end);
+
+        push_back_token(&head, &tail, &beg, &end);
+
+        tail->type = deduce_tok_type((const char **)&tail->lxm->txt);
+
+        tail->lxm->ln = ln;
+        tail->lxm->col = beg - col;
+
+        Scope.ln = ln;
+        Scope.col = beg - col;
+
+        beg = end;
+    }
+
+    if (*_src)
+    {
+        free(*_src);
+        *_src = NULL;
+    }
+
+    return head;
+}
+
+void parse(char *_fpath)
+{
+    Scope.path = _fpath;
+
+    char *buff = readf_2buff(_fpath);
+    Token *tok_list = lex(&buff); // frees buff
+
+    while (tok_list)
+    {
+        printf("ln: %d | col: %d | len: %d | type: %d\n%s\n\n", tok_list->lxm->ln, tok_list->lxm->col, tok_list->lxm->len, tok_list->type, tok_list->lxm->txt);
+        tok_list = tok_list->next;
+    }
+}
+
+/***********************************************************/
+/*                  FUNCTION DECLARATIONS                  */
+/***********************************************************/
 
 void get_string(const char *const *_beg, const char **_end)
 {
@@ -72,19 +150,6 @@ void get_char(const char *const *_beg, const char **_end)
     }
 
     *_end = *_end + len;
-}
-
-Token *new_token(const char *const *_src, size_t _src_size)
-{
-    Token *new_tok = (Token *)calloc(1, sizeof(Token));
-    if (!new_tok)
-    {
-        err_ex_p("couldn't allocate memory for a new token", FL);
-    }
-
-    new_tok->lxm = new_lexeme(_src, _src_size);
-
-    return new_tok;
 }
 
 void push_back_token(Token **_head, Token **_tail, const char *const *_beg, const char *const *_end)
@@ -155,58 +220,5 @@ void match(const char **_beg, const char **_end)
     if ((*_end) - (*_beg) == 0)
     {
         ++(*_end);
-    }
-}
-
-Token *lex(char **_src)
-{
-    const char *beg = *_src, *end = *_src, *col = *_src;
-    Token *head = NULL, *tail = NULL;
-    size_t ln = 1;
-
-    while (*end != '\0')
-    {
-        if (!*_src || !beg || !end)
-        {
-            err_ex_p("can't lex an empty source", Scope.path, Scope.ln);
-        }
-
-        skip_white_space(&beg, &ln, &col);
-
-        match(&beg, &end);
-
-        push_back_token(&head, &tail, &beg, &end);
-
-        tail->type = deduce_tok_type((const char **)&tail->lxm->txt);
-
-        tail->lxm->ln = ln;
-        tail->lxm->col = beg - col;
-
-        Scope.ln = ln;
-        Scope.col = beg - col;
-
-        beg = end;
-    }
-
-    if (*_src)
-    {
-        free(*_src);
-        *_src = NULL;
-    }
-
-    return head;
-}
-
-void parse(char *_fpath)
-{
-    Scope.path = _fpath;
-
-    char *buff = readf_2buff(_fpath);
-    Token *tok_list = lex(&buff); // frees buff
-
-    while (tok_list)
-    {
-        printf("ln: %d | col: %d | len: %d | type: %d\n%s\n\n", tok_list->lxm->ln, tok_list->lxm->col, tok_list->lxm->len, tok_list->type, tok_list->lxm->txt);
-        tok_list = tok_list->next;
     }
 }
