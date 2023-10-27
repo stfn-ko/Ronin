@@ -3,6 +3,10 @@
 #define EXIT_TODO 10
 #define EXIT_CRITICAL 11
 
+/***********************************************************/
+/*                    PUBLIC FUNCTIONS                     */
+/***********************************************************/
+
 void err_ex_p(const char *_err_msg, const char *__FILE, size_t __LINE)
 {
     if (__LINE)
