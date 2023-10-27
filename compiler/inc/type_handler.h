@@ -75,7 +75,6 @@ typedef enum token_t
 
     // LITERALS - CHARACTERS
     LIT_CHAR_ASCII,
-    LIT_CHAR_QUOTE_ESC,
     LIT_CHAR_ASCII_ESC,
     // LIT_CHAR_UNICODE_ESC,
 
@@ -106,15 +105,20 @@ typedef enum token_t
     PUNC_COL,      // :
 
     // DELIMITERS
-    DELIM_BRACES,     // ()
-    DELIM_SQ_BRACES,  // []
-    DELIM_CUR_BRACES, // {}
+    DELIM_BRACE_L,     // (
+    DELIM_BRACE_R,     // )
+    DELIM_SQ_BRACE_L,  // [
+    DELIM_SQ_BRACE_R,  // ]
+    DELIM_CUR_BRACE_L, // {
+    DELIM_CUR_BRACE_R, // }
 
     // ENUM SIZE
     _size_
 } token_t;
 
-size_t str_cmp(const char *_str1, const char *_str2);
 token_t deduce_tok_type(const char **_lxm);
+
+size_t str_len(const char *_str);
+size_t str_cmp(const char *_str1, const char *_str2);
 
 #endif
