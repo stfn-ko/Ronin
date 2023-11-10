@@ -2,6 +2,6 @@
 
 int main(int argc, char **argv)
 {
-    parse(argv[1]);
+    parse(argv[1]); //test
     return 0;
 }
