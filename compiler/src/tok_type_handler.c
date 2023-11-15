@@ -14,7 +14,7 @@ token_t is_float_kw(const char **_lxm);
 token_t is_bool_kw(const char **_lxm);
 token_t is_char_kw(const char **_lxm);
 token_t is_str_kw(const char **_lxm);
-token_t is_perm_kw(const char **_lxm);
+token_t is_permission_kw(const char **_lxm);
 token_t is_return_kw(const char **_lxm);
 token_t is_loop_kw(const char **_lxm);
 token_t is_ctrl_flow_kw(const char **_lxm);
@@ -256,7 +256,7 @@ token_t is_str_kw(const char **_lxm)
     return undefined;
 }
 
-token_t is_perm_kw(const char **_lxm)
+token_t is_permission_kw(const char **_lxm)
 {
     if (**_lxm == 'r')
     {
@@ -355,7 +355,7 @@ token_t is_keyword(const char **_lxm)
             is_bool_kw,
             is_char_kw,
             is_str_kw,
-            is_perm_kw,
+            is_permission_kw,
             is_return_kw,
             is_loop_kw,
             is_ctrl_flow_kw};
