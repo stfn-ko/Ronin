@@ -2,7 +2,7 @@
 #define LEXER_H
 
 #include "file_handler.h"
-#include "type_handler.h"
+#include "tok_type_handler.h"
 
 typedef struct Lexeme
 {
