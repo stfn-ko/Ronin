@@ -258,35 +258,31 @@ token_t is_str_kw(const char **_lxm)
 
 token_t is_permission_kw(const char **_lxm)
 {
-    if (**_lxm == 'r')
+    if (**_lxm == '/')
     {
-        if (str_cmp(*_lxm, "r"))
+        if (str_cmp(*_lxm, "/r"))
         {
             return KW_READ_ONLY;
         }
-        else if (str_cmp(*_lxm, "rx"))
+        else if (str_cmp(*_lxm, "/rx"))
         {
             return KW_READ_ONLY_UNIQUE;
         }
-        else if (str_cmp(*_lxm, "rs"))
+        else if (str_cmp(*_lxm, "/rs"))
         {
             return KW_READ_ONLY_SHARED;
         }
-        else if (str_cmp(*_lxm, "ro"))
-        {
-            return KW_READ_ONLY_OBSERVER;
-        }
-        else if (str_cmp(*_lxm, "rw"))
+        else if (str_cmp(*_lxm, "/rw"))
         {
             return KW_READ_AND_WIRTE;
         }
-        else if (str_cmp(*_lxm, "rwx"))
+        else if (str_cmp(*_lxm, "/rwx"))
         {
             return KW_READ_AND_WIRTE_UNIQUE;
         }
-        else if (str_cmp(*_lxm, "rwo"))
+        else if (str_cmp(*_lxm, "/rws"))
         {
-            return KW_READ_AND_WIRTE_OBSERVER;
+            return KW_READ_AND_WIRTE_SHARED;
         }
     }
 
