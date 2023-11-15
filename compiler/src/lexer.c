@@ -152,6 +152,30 @@ void get_char(const char *const *_beg, const char **_end)
     *_end = *_end + len;
 }
 
+void get_permission(const char *const *_beg, const char **_end)
+{
+    *_end = *_beg + 2;
+
+    if (*(*_end) == 's' || *(*_end) == 'x')
+    {
+        ++(*_end);
+    }
+    else if (*(*_end) == 'w')
+    {
+        ++(*_end);
+
+        if (*(*_end) == 's' || *(*_end) == 'x')
+        {
+            ++(*_end);
+        }
+    }
+    
+    if (!strchr(whitespace, **_end))
+    {
+        (*_end) = (*_beg) + 1;
+    }
+}
+
 void push_back_token(Token **_head, Token **_tail, const char *const *_beg, const char *const *_end)
 {
     if (!*_head)
@@ -202,17 +226,29 @@ void skip_white_space(const char **_beg, size_t *_ln, const char **_col)
 
 void match(const char **_beg, const char **_end)
 {
-    if (**_beg == '\"') // match strings
+    // match strings
+    if (**_beg == '\"') 
     {
         get_string(_beg, _end);
         return;
     }
-    else if (**_beg == '\'') // match chars
+    
+    // match chars
+    else if (**_beg == '\'') 
     {
         get_char(_beg, _end);
         return;
     }
-    else // match anything until delimiter
+    
+    // match permissions
+    else if (**_beg == '/' && *(*_beg + 1) == 'r')
+    {
+        get_permission(_beg, _end);
+        return;
+    }
+    
+    // match anything until delimiter
+    else
     {
         *_end = *_beg + strcspn(*_beg, delimiters);
     }
