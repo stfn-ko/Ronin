@@ -167,7 +167,7 @@ token_t is_int_kw(const char **_lxm)
 
 token_t is_uint_kw(const char **_lxm)
 {
-    if (**_lxm == 'i')
+    if (**_lxm == 'u')
     {
         if (str_cmp(*_lxm, "u8"))
         {
