@@ -1,4 +1,4 @@
-#include "../inc/type_handler.h"
+#include "../inc/tok_type_handler.h"
 
 /***********************************************************/
 /*                    PRIVATE FUNCTIONS                    */
@@ -120,13 +120,11 @@ token_t deduce_tok_type(const char **_lxm)
     {
         res = is_keyword(_lxm);
     }
-
-    if (res == undefined)
+    else if (res == undefined)
     {
         res = is_punctuation(_lxm);
     }
-
-    if (res == undefined)
+    else
     {
         res = is_delimiter(_lxm);
     }

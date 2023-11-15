@@ -1,5 +1,5 @@
-#ifndef TYPE_HANDLER_H
-#define TYPE_HANDLER_H
+#ifndef TOK_TYPE_HANDLER_H
+#define TOK_TYPE_HANDLER_H
 
 #include <stdlib.h>
 #include <string.h>
