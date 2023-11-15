@@ -12,12 +12,11 @@ typedef enum token_t
     KW_READ_ONLY,          // /r
     KW_READ_ONLY_UNIQUE,   // /rx
     KW_READ_ONLY_SHARED,   // /rs
-    KW_READ_ONLY_OBSERVER, // /ro
 
     // KEYWORD - PERMISSIONS - READ-AND-WRITE
     KW_READ_AND_WIRTE,          // /rw
     KW_READ_AND_WIRTE_UNIQUE,   // /rwx
-    KW_READ_AND_WIRTE_OBSERVER, // /rwo
+    KW_READ_AND_WIRTE_SHARED,   // /rws
 
     // KEYWORDS - CONTROL STATEMENTS
     KW_RETURN,
