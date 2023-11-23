@@ -1,0 +1,66 @@
+mod math
+{
+// private
+    - f64 pi = 3.14159;
+    - f64 e = 2.71828;
+
+// public
+
+    + f64 pi();
+    + f64 e();
+    + i64 abs(i64 num);
+    + i64 pow(i32 base, i32 exp);
+}
+
+impl >> math
+{
+    i64 pi()
+    {
+        return pi;
+    }
+
+    i64 e()
+    {
+        return e;
+    }
+
+    i64 abs(i64 num)
+    {
+        return (num < 0) ? num * -1 : num;
+    }
+
+    i64 pow(i32 base, i32 exp)
+    {
+        i64/rw res = base;
+
+        match (exp)
+        {
+            0 => return 1;
+            
+            _ =>
+            {
+                for (i32/rw i = 0; i < math::abs(exp); ++i)
+                {
+                    res *= base;
+                }
+
+                return (exp < 0) ? 1/res : res;
+            }
+        }
+    } 
+}
+
+
+i32 main () {
+    i64/rw x = math::pow(2, 3); //8
+    f64/r y = math::pi();
+
+    x += 2; //10
+    
+    str/r s = "hello world";
+    char/r c = '\n';
+    
+    f64/r z = 3.141592653589;
+
+    return x;
+}
