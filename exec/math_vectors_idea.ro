@@ -1,0 +1,57 @@
+mod vector
+{
+    struct 2D
+    {
+        f32/rw x;
+        f32/rw y;
+    }
+
+    struct 3D
+    {
+        f32/rw x;
+        f32/rw y;
+        f32/rw z;
+    }
+
+    + $ add($ v1, $ v2); // $ works like a placeholder
+    + f32 magnitude($ v);
+}
+
+impl mod vector >> 2D
+{
+    2D add(2D v1, 2D _v2)
+    {
+        2D res = {v1::x() + _vec_2::x(), v1::y() + v2::y()};
+        return res;
+    }
+
+    f32 magnitude(2D v)
+    {
+        return math::sqrt(math::pow(x, 2) + math::pow(y, 2));
+    }
+}
+
+impl mod vector >> 3D
+{
+    3D add(3D v1, 3D _v2)
+    {
+        3D res = {v1::x() + _vec_2::x(), v1::y() + v2::y(), v1::z() + v2::z()};
+        return res;
+    }
+
+    f32 magnitude(3D v)
+    {
+        return math::sqrt(math::pow(x, 2) + math::pow(y, 2) + math::pow(z, 2));
+    }
+}
+
+i32 main()
+{
+    2D v1 = {2, 3};
+    2D v2 = {4, 6};
+    2D v_sum = vector::2D::add(v1, v2);
+
+    3D _v1 = {1.1, 10, 4.2};
+    3D _v2 = {23, 8, 15.2};
+    3D _v_sum = vector::3D::add(_v1, _v2);
+}
