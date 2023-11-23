@@ -1,15 +1,5 @@
 #include "../inc/lexer.h"
 
-static const char *whitespace = " \r\n";
-static const char *delimiters = " \r\n(){}[]+-/*=,.;:";
-
-struct Scope
-{
-    const char *path;
-    size_t ln;
-    size_t col;
-} Scope = {NULL, 0, 0};
-
 /***********************************************************/
 /*                    PRIVATE FUNCTIONS                    */
 /***********************************************************/
@@ -101,7 +91,9 @@ Token *lex(char **_src)
 
 void parse(char *_fpath)
 {
-    Scope.path = _fpath;
+    Scope.ln = 0;
+    Scope.col = 0;
+    Scope.path = _fpath; 
 
     char *buff = readf_2buff(_fpath);
     Token *tok_list = lex(&buff); // frees buff
