@@ -3,477 +3,209 @@
 /***********************************************************/
 /*                    PRIVATE FUNCTIONS                    */
 /***********************************************************/
+void skip_comments(Lexeme *_lxm, Position *_pos);
+void skip_whitespace(Lexeme *_lxm, Position *_pos);
 
-token_t is_keyword(const char **_lxm);
-token_t is_punctuation(const char **_lxm);
-token_t is_delimiter(const char **_lxm);
-
-token_t is_int_kw(const char **_lxm);
-token_t is_uint_kw(const char **_lxm);
-token_t is_float_kw(const char **_lxm);
-token_t is_bool_kw(const char **_lxm);
-token_t is_char_kw(const char **_lxm);
-token_t is_str_kw(const char **_lxm);
-token_t is_permission_kw(const char **_lxm);
-token_t is_return_kw(const char **_lxm);
-token_t is_loop_kw(const char **_lxm);
-token_t is_ctrl_flow_kw(const char **_lxm);
+token_t get_char(Lexeme *_lxm);
+token_t get_string(Lexeme *_lxm);
+token_t get_permission(Lexeme *_lxm);
 
 /***********************************************************/
 /*                    PUBLIC FUNCTIONS                     */
 /***********************************************************/
-size_t str_cmp(const char *_str1, const char *_str2)
+Token *new_token(Token _tok)
 {
-    while (*_str1 || *_str2)
+    Token *new_tok = (Token *)calloc(1, sizeof(Token));
+    if (!new_tok)
     {
-        if (*_str1 != *_str2)
-        {
-            return 0;
-        }
-
-        _str1++;
-        _str2++;
+        err_ex_p("couldn't allocate memory for a new token", FL);
     }
 
-    return 1;
+    memcpy(new_tok, &_tok, sizeof(Token));
+
+    return new_tok;
 }
 
-// https://elixir.bootlin.com/glibc/glibc-2.17/source/string/strlen.c
-size_t str_len(const char *_str)
+const char *new_lexeme(Lexeme *_lxm)
 {
-    const char *char_ptr;
-    const unsigned long int *longword_ptr;
-    unsigned long int longword, himagic, lomagic;
+    size_t lxm_size = _lxm->end - _lxm->beg;
+    char *new_lxm = (char *)malloc(lxm_size);
 
-    for (char_ptr = _str; ((unsigned long int)char_ptr & (sizeof(longword) - 1)) != 0;
-         ++char_ptr)
-        if (*char_ptr == '\0')
-            return char_ptr - _str;
-
-    longword_ptr = (unsigned long int *)char_ptr;
-    himagic = 0x80808080L;
-    lomagic = 0x01010101L;
-
-    if (sizeof(longword) > 4)
+    if (!new_lxm)
     {
-        himagic = ((himagic << 16) << 16) | himagic;
-        lomagic = ((lomagic << 16) << 16) | lomagic;
+        err_ex_p("couldn't allocate memory for lexeme initialization", FL);
     }
 
-    if (sizeof(longword) > 8)
-    {
-        abort();
-    }
+    memcpy(new_lxm, _lxm->beg, lxm_size);
+    *(new_lxm + lxm_size) = '\0';
 
-    for (;;)
-    {
-        longword = *longword_ptr++;
-
-        if (((longword - lomagic) & ~longword & himagic) != 0)
-        {
-            const char *cp = (const char *)(longword_ptr - 1);
-
-            if (cp[0] == 0)
-            {
-                return cp - _str;
-            }
-            if (cp[1] == 0)
-            {
-                return cp - _str + 1;
-            }
-            if (cp[2] == 0)
-            {
-                return cp - _str + 2;
-            }
-            if (cp[3] == 0)
-            {
-                return cp - _str + 3;
-            }
-            if (sizeof(longword) > 4)
-            {
-                if (cp[4] == 0)
-                {
-                    return cp - _str + 4;
-                }
-                if (cp[5] == 0)
-                {
-                    return cp - _str + 5;
-                }
-                if (cp[6] == 0)
-                {
-                    return cp - _str + 6;
-                }
-                if (cp[7] == 0)
-                {
-                    return cp - _str + 7;
-                }
-            }
-        }
-    }
+    return new_lxm;
 }
 
-token_t deduce_tok_type(const char **_lxm)
+Token *tokenize(Lexeme *_lxm, Position *_pos)
 {
-    size_t res = undefined;
+    skip_whitespace(_lxm, _pos);
+    return new_token(match(_lxm, _pos));
+}
 
-    if (str_len(*_lxm) > 1)
+Token match(Lexeme *_lxm, Position *_pos)
+{
+    token_t type = undefined;
+
+    // match strings
+    if (*_lxm->beg == '\"') 
     {
-        res = is_keyword(_lxm);
+        type = get_string(_lxm);
     }
-    else if (res == undefined)
+    
+    // match chars
+    else if (*_lxm->beg == '\'') 
+    {  
+        type = get_char(_lxm);
+    }
+    
+    // match permissions
+    else if (*_lxm->beg == '/' && *(_lxm->beg + 1) == 'r')
     {
-        res = is_punctuation(_lxm);
+        type = get_permission(_lxm);
     }
+    
+    // match anything until delimiter
     else
     {
-        res = is_delimiter(_lxm);
+        _lxm->end = _lxm->beg + strcspn(_lxm->beg, delimiters);
+        const char *lxm_buff = new_lexeme(_lxm);
+        type = get_type(&lxm_buff); // frees lxm_buff
     }
 
-    return res;
+    if (_lxm->end - _lxm->beg == 0)
+    {
+        ++_lxm->end;
+    }
+
+    Token tok = {new_lexeme(_lxm), type, *_pos, NULL};
+    Scope.pos = *_pos;
+    return tok;
 }
+
 
 /***********************************************************/
 /*                  FUNCTION DECLARATIONS                  */
 /***********************************************************/
-
-token_t is_int_kw(const char **_lxm)
+void skip_whitespace(Lexeme *_lxm, Position *_pos)
 {
-    if (**_lxm == 'i')
+    char beg = *_lxm->beg;
+
+    while (beg == ' ' || beg == '\t' || beg == '\r' || beg == '\n')
     {
-        if (str_cmp(*_lxm, "i8"))
+        if (beg == '\n')
         {
-            return KW_I8;
+            _pos->ln++;
+            _pos->col = (size_t) (_lxm->end - _lxm->beg + 1);
         }
-        else if (str_cmp(*_lxm, "i16"))
+
+        if (beg == '\0')
         {
-            return KW_I16;
+            return;
         }
-        else if (str_cmp(*_lxm, "i32"))
-        {
-            return KW_I32;
-        }
-        else if (str_cmp(*_lxm, "i64"))
-        {
-            return KW_I64;
-        }
-        else if (str_cmp(*_lxm, "i128"))
-        {
-            return KW_I128;
-        }
+
+        beg = *(++_lxm->beg);
     }
 
-    return undefined;
+    skip_comments(_lxm, _pos);
 }
 
-token_t is_uint_kw(const char **_lxm)
+void skip_comments(Lexeme *_lxm, Position *_pos)
 {
-    if (**_lxm == 'u')
+    if (*_lxm->beg == '/' && *(_lxm->beg + 1) == '/')
     {
-        if (str_cmp(*_lxm, "u8"))
+        while (*_lxm->beg != '\n')
         {
-            return KW_U8;
+            ++_lxm->beg;
         }
-        else if (str_cmp(*_lxm, "u16"))
-        {
-            return KW_U16;
-        }
-        else if (str_cmp(*_lxm, "u32"))
-        {
-            return KW_U32;
-        }
-        else if (str_cmp(*_lxm, "u64"))
-        {
-            return KW_U64;
-        }
-        else if (str_cmp(*_lxm, "u128"))
-        {
-            return KW_U128;
-        }
-        else if (str_cmp(*_lxm, "usize"))
-        {
-            return KW_USIZE;
-        }
-    }
 
-    return undefined;
+        skip_whitespace(_lxm, _pos);
+    }
 }
 
-token_t is_float_kw(const char **_lxm)
+token_t get_string(Lexeme *_lxm)
 {
-    if (**_lxm == 'f')
+    _lxm->end = _lxm->beg + 1;
+
+    size_t len = strcspn(_lxm->end, "\"") + 1;
+    if (len == strlen(_lxm->beg))
     {
-        if (str_cmp(*_lxm, "f32"))
+        err_ex_p("string is missing a closing sign", Scope.path, Scope.pos.ln);
+    }
+
+    // TODO: substitute special characters
+
+    _lxm->end = _lxm->end + len;
+    
+    return LIT_STRING_ASCII; 
+}
+
+token_t get_char(Lexeme *_lxm)
+{
+    _lxm->end = _lxm->beg + 1;
+
+    size_t len = strcspn(_lxm->end, "\'") + 1;
+
+    // TODO: substitute special characters
+
+    if (len == strlen(_lxm->beg))
+    {
+        err_ex_p("char is missing a closing sign", Scope.path, Scope.pos.ln);
+    }
+    if (len > 3)
+    {
+        err_ex_p("char overflow", Scope.path, Scope.pos.ln);
+    }
+
+    _lxm->end = _lxm->end + len;
+
+    return LIT_CHAR_ASCII; 
+}
+
+token_t get_permission(Lexeme *_lxm)
+{
+    _lxm->end = _lxm->beg + 2;
+    token_t type = KW_READ_ONLY;
+
+    if (*_lxm->end == 'x')
+    {
+        ++_lxm->end;
+        type = KW_READ_ONLY_UNIQUE;
+    }
+    else if (*_lxm->end == 's')
+    {
+        ++_lxm->end;
+        type = KW_READ_ONLY_SHARED;
+    }
+    else if (*_lxm->end == 'w')
+    {
+        ++_lxm->end;
+
+        if (*_lxm->end == 's')
         {
-            return KW_F32;
+            ++_lxm->end;
+            type = KW_READ_AND_WIRTE_SHARED;
         }
-        else if (str_cmp(*_lxm, "f64"))
+        else if (*_lxm->end == 'x')
         {
-            return KW_F64;
+            ++_lxm->end;
+            type = KW_READ_AND_WIRTE_UNIQUE;
         }
-        else if (str_cmp(*_lxm, "f128"))
-        {
-            return KW_F128;
-        }
+
+        type = KW_READ_AND_WIRTE;
+    }
+    
+    if (!strchr(whitespace, *_lxm->end))
+    {
+        _lxm->end = _lxm->beg + 1;
+        type = undefined;
     }
 
-    return undefined;
-}
-token_t is_bool_kw(const char **_lxm)
-{
-    if (str_cmp(*_lxm, "bool"))
-    {
-        return KW_BOOL;
-    }
-    else if (str_cmp(*_lxm, "true"))
-    {
-        return KW_TRUE;
-    }
-    else if (str_cmp(*_lxm, "false"))
-    {
-        return KW_FALSE;
-    }
-
-    return undefined;
+    return type;
 }
 
-token_t is_char_kw(const char **_lxm)
-{
-    if (str_cmp(*_lxm, "char"))
-    {
-        return KW_CHAR;
-    }
-
-    return undefined;
-}
-
-token_t is_str_kw(const char **_lxm)
-{
-    if (str_cmp(*_lxm, "str"))
-    {
-        return KW_STR;
-    }
-
-    return undefined;
-}
-
-token_t is_permission_kw(const char **_lxm)
-{
-    if (**_lxm == '/')
-    {
-        if (str_cmp(*_lxm, "/r"))
-        {
-            return KW_READ_ONLY;
-        }
-        else if (str_cmp(*_lxm, "/rx"))
-        {
-            return KW_READ_ONLY_UNIQUE;
-        }
-        else if (str_cmp(*_lxm, "/rs"))
-        {
-            return KW_READ_ONLY_SHARED;
-        }
-        else if (str_cmp(*_lxm, "/rw"))
-        {
-            return KW_READ_AND_WIRTE;
-        }
-        else if (str_cmp(*_lxm, "/rwx"))
-        {
-            return KW_READ_AND_WIRTE_UNIQUE;
-        }
-        else if (str_cmp(*_lxm, "/rws"))
-        {
-            return KW_READ_AND_WIRTE_SHARED;
-        }
-    }
-
-    return undefined;
-}
-
-token_t is_return_kw(const char **_lxm)
-{
-    if (str_cmp(*_lxm, "return"))
-    {
-        return KW_RETURN;
-    }
-
-    return undefined;
-}
-
-token_t is_loop_kw(const char **_lxm)
-{
-    if (str_cmp(*_lxm, "while"))
-    {
-        return KW_WHILE;
-    }
-    else if (str_cmp(*_lxm, "for"))
-    {
-        return KW_FOR;
-    }
-    else if (str_cmp(*_lxm, "break"))
-    {
-        return KW_BREAK;
-    }
-    else if (str_cmp(*_lxm, "skip"))
-    {
-        return KW_SKIP;
-    }
-
-    return undefined;
-}
-
-token_t is_ctrl_flow_kw(const char **_lxm)
-{
-    if (str_cmp(*_lxm, "if"))
-    {
-        return KW_IF;
-    }
-    else if (str_cmp(*_lxm, "else"))
-    {
-        return KW_ELSE;
-    }
-    else if (str_cmp(*_lxm, "match"))
-    {
-        return KW_MATCH;
-    }
-
-    return undefined;
-}
-
-token_t is_keyword(const char **_lxm)
-{
-    token_t res = undefined;
-
-    token_t (*keyword_checks[])(const char **) =
-        {
-            is_int_kw,
-            is_uint_kw,
-            is_float_kw,
-            is_bool_kw,
-            is_char_kw,
-            is_str_kw,
-            is_permission_kw,
-            is_return_kw,
-            is_loop_kw,
-            is_ctrl_flow_kw};
-
-    size_t arr_size = sizeof(keyword_checks) / sizeof(keyword_checks[0]);
-
-    for (size_t i = 0; i < arr_size; ++i)
-    {
-        res = keyword_checks[i](_lxm);
-        if (res != undefined)
-        {
-            return res;
-        }
-    }
-
-    return res;
-}
-
-token_t is_punctuation(const char **_lxm)
-{
-    if (str_cmp(*_lxm, "+"))
-    {
-        return PUNC_PLUS;
-    }
-    else if (str_cmp(*_lxm, "-"))
-    {
-        return PUNC_MINUS;
-    }
-    else if (str_cmp(*_lxm, "/"))
-    {
-        return PUNC_FW_SLASH;
-    }
-    else if (str_cmp(*_lxm, "*"))
-    {
-        return PUNC_STAR;
-    }
-    else if (str_cmp(*_lxm, "%"))
-    {
-        return PUNC_PERCENT;
-    }
-    else if (str_cmp(*_lxm, "^"))
-    {
-        return PUNC_CARET;
-    }
-    else if (str_cmp(*_lxm, "!"))
-    {
-        return PUNC_NOT;
-    }
-    else if (str_cmp(*_lxm, "&"))
-    {
-        return PUNC_AND;
-    }
-    else if (str_cmp(*_lxm, "|"))
-    {
-        return PUNC_OR;
-    }
-    else if (str_cmp(*_lxm, "="))
-    {
-        return PUNC_EQ;
-    }
-    else if (str_cmp(*_lxm, ">"))
-    {
-        return PUNC_GT;
-    }
-    else if (str_cmp(*_lxm, "<"))
-    {
-        return PUNC_LT;
-    }
-    else if (str_cmp(*_lxm, "@"))
-    {
-        return PUNC_AT;
-    }
-    else if (str_cmp(*_lxm, "#"))
-    {
-        return PUNC_HTAG;
-    }
-    else if (str_cmp(*_lxm, ","))
-    {
-        return PUNC_COMMA;
-    }
-    else if (str_cmp(*_lxm, "."))
-    {
-        return PUNC_DOT;
-    }
-    else if (str_cmp(*_lxm, ";"))
-    {
-        return PUNC_SEMI;
-    }
-    else if (str_cmp(*_lxm, ":"))
-    {
-        return PUNC_COL;
-    }
-
-    return undefined;
-}
-
-token_t is_delimiter(const char **_lxm)
-{
-    if (str_cmp(*_lxm, "("))
-    {
-        return DELIM_BRACE_L;
-    }
-    else if (str_cmp(*_lxm, ")"))
-    {
-        return DELIM_BRACE_R;
-    }
-    else if (str_cmp(*_lxm, "["))
-    {
-        return DELIM_SQ_BRACE_L;
-    }
-    else if (str_cmp(*_lxm, "]"))
-    {
-        return DELIM_SQ_BRACE_R;
-    }
-    else if (str_cmp(*_lxm, "{"))
-    {
-        return DELIM_SQ_BRACE_L;
-    }
-    else if (str_cmp(*_lxm, "}"))
-    {
-        return DELIM_SQ_BRACE_R;
-    }
-
-    return undefined;
-}
