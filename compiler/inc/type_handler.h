@@ -1,8 +1,6 @@
 #ifndef TYPE_HANDLER_H
 #define TYPE_HANDLER_H
 
-#include <stdlib.h>
-#include <string.h>
 #include "error_handler.h"
 
 typedef enum token_t
