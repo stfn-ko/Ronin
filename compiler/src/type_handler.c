@@ -14,28 +14,30 @@ token_t is_float_kw(const char **_lxm);
 token_t is_return_kw(const char **_lxm);
 token_t is_ctrl_flow_kw(const char **_lxm);
 
+
+// TODO: fix type assignment
 token_t get_type(const char **_lxm)
 {
     size_t res = undefined;
 
-    if (strlen(*_lxm) > 1)
-    {
-        res = is_keyword(_lxm);
-    }
-    else if (res == undefined)
-    {
-        res = is_punctuation(_lxm);
-    }
-    else
-    {
-        res = is_delimiter(_lxm);
-    }
+    // if (strlen(*_lxm) > 1)
+    // {
+    //      res = is_keyword(_lxm);
+    // }
+    // else if (res == undefined)
+    // {
+    //     res = is_punctuation(_lxm);
+    // }
+    // else
+    // {
+    //     res = is_delimiter(_lxm);
+    // }
 
-    if (*_lxm)
-    {
-        free(_lxm);
-        *_lxm = NULL;
-    }
+    // if (*_lxm)
+    // {
+    //     free(_lxm);
+    //     *_lxm = NULL;
+    // }
 
     return res;
 }
