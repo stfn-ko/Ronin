@@ -8,6 +8,7 @@ void skip_whitespace(Lexeme *_lxm, Position *_pos);
 
 token_t get_char(Lexeme *_lxm);
 token_t get_string(Lexeme *_lxm);
+token_t get_num_lit(Lexeme *_lxm);
 token_t get_permission(Lexeme *_lxm);
 
 /***********************************************************/
@@ -70,6 +71,12 @@ Token match(Lexeme *_lxm, Position *_pos)
         type = get_permission(_lxm);
     }
     
+    // match numerical literals
+    else if (*_lxm->beg >= '0' && *_lxm->beg <= '9')
+    {
+        type = get_num_lit(_lxm);
+    }
+
     // match anything until delimiter
     else
     {
@@ -167,6 +174,34 @@ token_t get_char(Lexeme *_lxm)
     return LIT_CHAR_ASCII; 
 }
 
+token_t get_num_lit(Lexeme *_lxm)
+{
+    char isfloat = 0;
+    _lxm->end = _lxm->beg;
+
+    while (*_lxm->end >= '0' && *_lxm->end <= '9')
+    {
+        if (*(_lxm->end + 1) == '.')
+        {
+            isfloat = 1;
+            _lxm->end += 2;
+        }
+        else 
+        {
+            ++_lxm->end;
+        }
+    }
+
+    if (isfloat)
+    {
+        return LIT_FLOAT;
+    }
+    else 
+    {
+        return LIT_INTEGER;
+    }
+}
+
 token_t get_permission(Lexeme *_lxm)
 {
     _lxm->end = _lxm->beg + 2;
@@ -208,4 +243,3 @@ token_t get_permission(Lexeme *_lxm)
 
     return type;
 }
-
