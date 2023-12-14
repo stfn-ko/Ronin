@@ -10,7 +10,7 @@
 
 //  ===-------------------------------------------=== FUNC DEC
 //  ***---------------------*** VOID FUNCS
-void err_ex_p(const char *_err_msg, const char *__FILE, size_t __LINE);
-void todo_err(const char *_msg, const char *__FILE, size_t __LINE);
+void error_exit(const char *_err_msg, const char *__FILE, size_t __LINE);
+void todo_message(const char *_msg, const char *__FILE, size_t __LINE);
 
 #endif
