@@ -7,7 +7,7 @@
 /*                  FUNCTION DEFINITIONS                   */
 /***********************************************************/
 
-void err_ex_p(const char *_err_msg, const char *__FILE, size_t __LINE)
+void error_exit(const char *_err_msg, const char *__FILE, size_t __LINE)
 {
     if (__LINE)
     {
@@ -21,10 +21,8 @@ void err_ex_p(const char *_err_msg, const char *__FILE, size_t __LINE)
     exit(EXIT_CRITICAL);
 }
 
-void todo_err(const char *_msg, const char *__FILE, size_t __LINE)
+void todo_message(const char *_msg, const char *__FILE, size_t __LINE)
 {
-    printf(UL_Purple "\nTODO" Reset B_Purple " ( %s | ln:%d ) >>> " Reset "%s\n\n",
+    printf(UL_Purple "\nTODO" Reset B_Purple " ( file: %s | ln: %d ) >>> " Reset "%s\n",
            __FILE, __LINE, _msg);
-
-    exit(EXIT_TODO);
 }
