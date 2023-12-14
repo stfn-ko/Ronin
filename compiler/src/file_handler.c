@@ -8,18 +8,18 @@ char *readf_2buff(char *_fpath)
 {
     if (!_fpath)
     {
-        err_ex_p("no input files", _fpath, 0);
+        error_exit("no input files", _fpath, 0);
     }
 
     FILE *fp = fopen(_fpath, "rb");
 
     if (!fp)
     {
-        err_ex_p("no such file or directory", _fpath, 0);
+        error_exit("no such file or directory", _fpath, 0);
     }
     if (!strstr(_fpath, ".ro"))
     {
-        err_ex_p("invalid file extension", _fpath, 0);
+        error_exit("invalid file extension", _fpath, 0);
     }
 
     // get file size
@@ -31,11 +31,11 @@ char *readf_2buff(char *_fpath)
 
     if (!buff)
     {
-        err_ex_p("couldn't allocate memory for text buffer", FL);
+        error_exit("couldn't allocate memory for text buffer", FL);
     }
     if (fread(buff, 1, fs, fp) != fs)
     {
-        err_ex_p("eof reached while reading file", FL);
+        error_exit("eof reached while reading file", FL);
     }
 
     fclose(fp);

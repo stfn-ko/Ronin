@@ -20,7 +20,7 @@ Token *lex(char **_src)
     {
         if (!*_src || !lxm.beg || !lxm.end)
         {
-            err_ex_p("can't lex an empty source", Scope.path, Scope.pos.ln);
+            error_exit("can't lex an empty source", Scope.path, Scope.pos.ln);
         }
 
         push_back_token(&head, &tail, tokenize(&lxm, &pos));

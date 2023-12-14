@@ -21,7 +21,7 @@ Token *new_token(Token _tok)
     Token *new_tok = (Token *)calloc(1, sizeof(Token));
     if (!new_tok)
     {
-        err_ex_p("couldn't allocate memory for a new token", FL);
+        error_exit("couldn't allocate memory for a new token", FL);
     }
 
     memcpy(new_tok, &_tok, sizeof(Token));
@@ -36,7 +36,7 @@ const char *new_lexeme(Lexeme *_lxm)
 
     if (!new_lxm)
     {
-        err_ex_p("couldn't allocate memory for lexeme initialization", FL);
+        error_exit("couldn't allocate memory for lexeme initialization", FL);
     }
 
     memcpy(new_lxm, _lxm->beg, lxm_size);
@@ -140,10 +140,10 @@ token_t get_string(Lexeme *_lxm)
     size_t len = strcspn(_lxm->end, "\"") + 1;
     if (len == strlen(_lxm->beg))
     {
-        err_ex_p("string is missing a closing sign", Scope.path, Scope.pos.ln);
+        error_exit("string is missing a closing sign", Scope.path, Scope.pos.ln);
     }
 
-    // TODO: substitute special characters
+    todo_message("substitute special characters", FL);
 
     _lxm->end = _lxm->end + len;
     
@@ -156,15 +156,15 @@ token_t get_char(Lexeme *_lxm)
 
     size_t len = strcspn(_lxm->end, "\'") + 1;
 
-    // TODO: substitute special characters
+    todo_message("substitute special characters", FL);
 
     if (len == strlen(_lxm->beg))
     {
-        err_ex_p("char is missing a closing sign", Scope.path, Scope.pos.ln);
+        error_exit("char is missing a closing sign", Scope.path, Scope.pos.ln);
     }
     if (len > 3)
     {
-        err_ex_p("char overflow", Scope.path, Scope.pos.ln);
+        error_exit("char overflow", Scope.path, Scope.pos.ln);
     }
 
     _lxm->end = _lxm->end + len;
