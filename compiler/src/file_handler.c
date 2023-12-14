@@ -1,7 +1,7 @@
 #include "../inc/file_handler.h"
 
 /***********************************************************/
-/*                    PUBLIC FUNCTIONS                     */
+/*                  FUNCTION DEFINITIONS                   */
 /***********************************************************/
 
 char *readf_2buff(char *_fpath)

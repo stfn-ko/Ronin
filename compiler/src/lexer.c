@@ -7,8 +7,9 @@
 void push_back_token(Token **_head, Token **_tail, Token *_tok);
 
 /***********************************************************/
-/*                    PUBLIC FUNCTIONS                     */
+/*                  FUNCTION DEFINITIONS                   */
 /***********************************************************/
+
 Token *lex(char **_src)
 {
     Token *head = NULL, *tail = NULL;
@@ -52,10 +53,6 @@ void parse(char *_fpath)
         tok_list = tok_list->next;
     }
 }
-
-/***********************************************************/
-/*                  FUNCTION DECLARATIONS                  */
-/***********************************************************/
 
 void push_back_token(Token **_head, Token **_tail, Token *_tok)
 {

@@ -3,6 +3,7 @@
 /***********************************************************/
 /*                    PRIVATE FUNCTIONS                    */
 /***********************************************************/
+
 void skip_comments(Lexeme *_lxm, Position *_pos);
 void skip_whitespace(Lexeme *_lxm, Position *_pos);
 
@@ -12,8 +13,9 @@ token_t get_num_lit(Lexeme *_lxm);
 token_t get_permission(Lexeme *_lxm);
 
 /***********************************************************/
-/*                    PUBLIC FUNCTIONS                     */
+/*                  FUNCTION DEFINITIONS                   */
 /***********************************************************/
+
 Token *new_token(Token _tok)
 {
     Token *new_tok = (Token *)calloc(1, sizeof(Token));
@@ -95,10 +97,6 @@ Token match(Lexeme *_lxm, Position *_pos)
     return tok;
 }
 
-
-/***********************************************************/
-/*                  FUNCTION DECLARATIONS                  */
-/***********************************************************/
 void skip_whitespace(Lexeme *_lxm, Position *_pos)
 {
     char beg = *_lxm->beg;

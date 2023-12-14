@@ -1,5 +1,9 @@
 #include "../inc/type_handler.h"
 
+/***********************************************************/
+/*                    PRIVATE FUNCTIONS                    */
+/***********************************************************/
+
 token_t is_keyword(const char **_lxm);
 token_t is_delimiter(const char **_lxm);
 token_t is_punctuation(const char **_lxm);
@@ -14,6 +18,9 @@ token_t is_float_kw(const char **_lxm);
 token_t is_return_kw(const char **_lxm);
 token_t is_ctrl_flow_kw(const char **_lxm);
 
+/***********************************************************/
+/*                  FUNCTION DEFINITIONS                   */
+/***********************************************************/
 
 // TODO: fix type assignment
 token_t get_type(const char **_lxm)
