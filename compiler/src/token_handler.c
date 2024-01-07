@@ -56,23 +56,23 @@ Token match(Lexeme *_lxm, Position *_pos)
     token_t type = undefined;
 
     // match strings
-    if (*_lxm->beg == '\"') 
+    if (*_lxm->beg == '\"')
     {
         type = get_string(_lxm);
     }
-    
+
     // match chars
-    else if (*_lxm->beg == '\'') 
-    {  
+    else if (*_lxm->beg == '\'')
+    {
         type = get_char(_lxm);
     }
-    
+
     // match permissions
     else if (*_lxm->beg == '/' && *(_lxm->beg + 1) == 'r')
     {
         type = get_permission(_lxm);
     }
-    
+
     // match numerical literals
     else if (*_lxm->beg >= '0' && *_lxm->beg <= '9')
     {
@@ -94,6 +94,9 @@ Token match(Lexeme *_lxm, Position *_pos)
 
     Token tok = {new_lexeme(_lxm), type, *_pos, NULL};
     Scope.pos = *_pos;
+
+    _pos->col += (size_t)(_lxm->end - _lxm->beg); // update the pos?
+
     return tok;
 }
 
@@ -106,10 +109,15 @@ void skip_whitespace(Lexeme *_lxm, Position *_pos)
         if (beg == '\n')
         {
             _pos->ln++;
-            _pos->col = (size_t) (_lxm->end - _lxm->beg + 1);
+            _pos->col = 1;
         }
 
-        if (beg == '\0')
+        else if (beg == ' ')
+        {
+            ++_pos->col;
+        }
+
+        else if (beg == '\0')
         {
             return;
         }
@@ -146,8 +154,8 @@ token_t get_string(Lexeme *_lxm)
     todo_message("substitute special characters", FL);
 
     _lxm->end = _lxm->end + len;
-    
-    return LIT_STRING_ASCII; 
+
+    return LIT_STRING_ASCII;
 }
 
 token_t get_char(Lexeme *_lxm)
@@ -169,7 +177,7 @@ token_t get_char(Lexeme *_lxm)
 
     _lxm->end = _lxm->end + len;
 
-    return LIT_CHAR_ASCII; 
+    return LIT_CHAR_ASCII;
 }
 
 token_t get_num_lit(Lexeme *_lxm)
@@ -184,7 +192,7 @@ token_t get_num_lit(Lexeme *_lxm)
             isfloat = 1;
             _lxm->end += 2;
         }
-        else 
+        else
         {
             ++_lxm->end;
         }
@@ -194,7 +202,7 @@ token_t get_num_lit(Lexeme *_lxm)
     {
         return LIT_FLOAT;
     }
-    else 
+    else
     {
         return LIT_INTEGER;
     }
@@ -232,7 +240,7 @@ token_t get_permission(Lexeme *_lxm)
 
         type = KW_READ_AND_WIRTE;
     }
-    
+
     if (!strchr(whitespace, *_lxm->end))
     {
         _lxm->end = _lxm->beg + 1;
