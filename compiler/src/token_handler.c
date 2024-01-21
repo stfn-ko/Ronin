@@ -95,7 +95,7 @@ Token match(Lexeme *_lxm, Position *_pos)
     Token tok = {new_lexeme(_lxm), type, *_pos, NULL};
     Scope.pos = *_pos;
 
-    _pos->col += (size_t)(_lxm->end - _lxm->beg); // update the pos?
+    _pos->col += (size_t)(_lxm->end - _lxm->beg); 
 
     return tok;
 }
