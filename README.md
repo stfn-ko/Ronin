@@ -1,4 +1,11 @@
 ![Ronin Logo](/misc/logo_red.jpg)
 # Ronin - The Programming Language 
 
-Ronin is a powerful programming language designed for developers who relish crafting from the ground up, whether it's embedded software or cutting-edge AI. Blending the robustness of Rust and the efficiency of C++, Ronin carves its niche with a unique approach to memory management. Fast and resilient, it empowers creators to master their code, embodying independence and precision in every line.
+## About
+The language is still in its early stages of development. When I first started working on this project, my goal was to create something that captures the familiarity of C but diverges from the optimizations introduced in that language due to the technological constraints of its time. While I appreciate feature-rich languages, I dislike the steep learning curve that often accompanies them as newcomers grapple with an overwhelming amount of content.
+
+I aspire for this language to strike a balance between the freedom of C and the robustness of Rust (though perhaps not achieving perfection), infused with some of my unique ideas that have yet to disappoint me (or not). The name "ronin" is inspired by the concept of being a solo warrior, tackling challenges head-on, even as we remain open to future collaborations with like-minded individuals.
+
+
+
+
