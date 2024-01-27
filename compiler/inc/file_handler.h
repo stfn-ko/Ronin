@@ -1,8 +1,9 @@
-#ifndef FILE_HANDLER_H
-#define FILE_HANDLER_H
+#pragma once
+
+#include <memory>
+#include <fstream>
 
 #include "error_handler.h"
 
-char *readf_2buff(char *_fpath);
-
-#endif
+auto valid_extension(const std::string &file_name) -> bool;
+auto read_file(const std::string &file_path) -> std::unique_ptr<std::string>;

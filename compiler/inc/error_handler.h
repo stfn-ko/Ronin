@@ -1,16 +1,6 @@
-#ifndef ERROR_HANDLER_H
-#define ERROR_HANDLER_H
+#pragma once
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include "ANSI.h"
+#include <string>
+#include <iostream>
 
-#define FL __FILE__, __LINE__
-
-//  ===-------------------------------------------=== FUNC DEC
-//  ***---------------------*** VOID FUNCS
-void error_exit(const char *_err_msg, const char *__FILE, size_t __LINE);
-void todo_message(const char *_msg, const char *__FILE, size_t __LINE);
-
-#endif
+void report(bool condition, std::string error_message, bool critical = true);
