@@ -99,7 +99,7 @@ void skip_comments(auto &it, auto &pos, auto end);
 void skip_whitespace(auto &it, auto &pos);
 
 void read_string(auto &tokens, auto &start, auto &it, auto &pos, auto &end);
-void read_keyword_with_delimeter(auto &it);
+void read_keyword_with_delimeter(auto &start, auto &it);
 
 void get_tokens(auto &tokens, auto &it, auto &pos, auto end);
 auto scan(const std::string &path) -> std::vector<token>;
