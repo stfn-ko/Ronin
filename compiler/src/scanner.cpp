@@ -130,10 +130,28 @@ void get_tokens(auto &tokens, auto &it, auto &pos, auto end)
 {
     auto start = it;
 
-    while (!is_delim(it) && it != end)
+    if (*it == '_' || isalpha(*it))
     {
-        // read until delimeter
-        ++it;
+        // get identifiers
+        while (isalnum(*it) && it != end)
+        {
+            ++it;
+        }
+    }
+
+    else if (isdigit(*it))
+    {
+        auto punct_used = 0;
+        // get number literal
+        while ((isdigit(*it) || *it == '.') && it != end && punct_used <= 1)
+        {
+            if (*it == '.')
+            {
+                punct_used++;
+            }
+
+            it++;
+        }
     }
 
     if (start == it)
