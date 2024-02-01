@@ -4,7 +4,6 @@ i32 main () {
     x = 10;
     
     str/r s = "hello world";
-    char/r c = '\h';
     
     f64/r z = 3.141592653589;
 
