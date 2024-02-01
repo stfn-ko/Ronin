@@ -19,12 +19,14 @@ typedef enum
     KW_PERM_RWX,
     KW_PERM_RWS,
 
-    KW_ISIZE,
-    KW_I32,
-    KW_USIZE,
-    KW_U32,
-    KW_F32,
-    KW_STR,
+    KW_TYPE_ISIZE,
+    KW_TYPE_I32,
+    KW_TYPE_USIZE,
+    KW_TYPE_U32,
+    KW_TYPE_F32,
+    KW_TYPE_STR,
+
+    KW_FN,
 
     KW_IF,
     KW_ELSE,
@@ -39,6 +41,7 @@ typedef enum
     COMB_GTOE,
     COMB_LTOE,
     COMB_EQ,
+    COMB_RETURN,
     COMB_MINUS_EQ,
     COMB_PLUS_EQ,
     COMB_ADD,
@@ -78,12 +81,6 @@ typedef enum
     MISC_POINT,
     MISC_COMMA,
 } token_t;
-
-typedef struct
-{
-    size_t ln;
-    size_t col;
-} position;
 
 typedef struct
 {

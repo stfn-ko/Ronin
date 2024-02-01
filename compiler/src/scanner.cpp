@@ -8,12 +8,15 @@ std::unordered_map<std::string, token_t> keyword_map =
         {"/rw", KW_PERM_RW},
         {"/rwx", KW_PERM_RWX},
         {"/rws", KW_PERM_RWS},
-        {"isize", KW_ISIZE},
-        {"i32", KW_I32},
-        {"usize", KW_USIZE},
-        {"u32", KW_U32},
-        {"f32", KW_F32},
-        {"str", KW_STR},
+
+        {"isize", KW_TYPE_ISIZE},
+        {"i32", KW_TYPE_I32},
+        {"usize", KW_TYPE_USIZE},
+        {"u32", KW_TYPE_U32},
+        {"f32", KW_TYPE_F32},
+        {"str", KW_TYPE_STR},
+
+        {"fn", KW_FN},
         {"if", KW_IF},
         {"else", KW_ELSE},
         {"for", KW_FOR},
@@ -23,6 +26,7 @@ std::unordered_map<std::string, token_t> keyword_map =
         {">=", COMB_GTOE},
         {"<=", COMB_LTOE},
         {"==", COMB_EQ},
+        {"->", COMB_RETURN},
         {"+=", COMB_MINUS_EQ},
         {"-=", COMB_PLUS_EQ},
         {"++", COMB_ADD},
@@ -97,7 +101,7 @@ void read_string(auto &tokens, auto &start, auto &it, auto &pos, auto &end)
 {
     while (*(++it) != '"')
     {
-        report(it == end, "Syntax Error: Unterminated string literal");
+        error(it == end, "Unterminated string literal");
     }
 
     tokens.emplace_back(token{std::string(start, ++it), token_t::LIT_STR, pos});
@@ -169,7 +173,7 @@ void get_tokens(auto &tokens, auto &it, auto &pos, auto end)
 auto scan(const std::string &path) -> std::vector<token>
 {
     auto buffer = read_file(path);
-    report(buffer->empty(), "Can't parse an empty source");
+    error(buffer->empty(), "Can't parse an empty source");
 
     std::vector<token> tokens = {};
     position pos = {.ln = 1, .col = 1};
@@ -188,6 +192,8 @@ auto scan(const std::string &path) -> std::vector<token>
         {
             skip_whitespace(it, pos);
         }
+
+        // introduce tokens scanner that edits previous 3 tokens if needed
     }
 
     return tokens;
