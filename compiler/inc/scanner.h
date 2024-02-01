@@ -19,6 +19,7 @@ typedef enum
     KW_PERM_RWX,
     KW_PERM_RWS,
 
+    KW_TYPE_BOOL,
     KW_TYPE_ISIZE,
     KW_TYPE_I32,
     KW_TYPE_USIZE,

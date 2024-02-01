@@ -9,6 +9,7 @@ std::unordered_map<std::string, token_t> keyword_map =
         {"/rwx", KW_PERM_RWX},
         {"/rws", KW_PERM_RWS},
 
+        {"bool", KW_TYPE_BOOL},
         {"isize", KW_TYPE_ISIZE},
         {"i32", KW_TYPE_I32},
         {"usize", KW_TYPE_USIZE},
