@@ -14,12 +14,12 @@ auto valid_extension(const std::string &file_name) -> bool
 
 auto read_file(const std::string &file_path) -> std::unique_ptr<std::string>
 {
-    report(file_path.empty(), "No input file specified");
-    report(!valid_extension(file_path), "Invalid file extension type");
+    error(file_path.empty(), "No input file specified");
+    error(!valid_extension(file_path), "Invalid file extension type");
 
     std::ifstream ifs(file_path);
 
-    report(!ifs.is_open(), "Failed to open file: " + file_path);
+    error(!ifs.is_open(), "Failed to open file: " + file_path);
 
     return std::make_unique<std::string>(std::istreambuf_iterator<char>(ifs),
                                          std::istreambuf_iterator<char>());
