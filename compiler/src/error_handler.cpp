@@ -18,11 +18,11 @@ void error(bool condition, std::string msg)
     }
 }
 
-void warning(bool condition, error_t err)
+void warning(bool condition, std::string msg)
 {
     if (condition)
     {
-        std::cout << err.msg << "\n";
+        std::cout << msg << "\n";
     }
 }
 

@@ -32,5 +32,5 @@ typedef struct
 } error_t;
 
 void error(bool condition, std::string msg);
-void warning(bool condition, error_t err);
+void warning(bool condition, std::string msg);
 void report(bool condition, error_t err);
