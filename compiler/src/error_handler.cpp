@@ -1,6 +1,6 @@
 #include "../inc/error_handler.h"
 
-auto mkerr(std::string &context, std::string &message, errc error_code, position position) -> error_t
+auto mkerr(const char *context, const char *message, errc error_code, position position) -> error_t
 {
     return error_t{.context = context, .msg = message, .code = error_code, .pos = position};
 }
@@ -9,9 +9,9 @@ void error(bool condition, std::string msg)
 {
     if (condition)
     {
-        std::cout 
-            << BOLD_RED "\n    ERROR >> " COLOR_RESET 
-            << msg 
+        std::cout
+            << BOLD_RED "\n    ERROR >> " COLOR_RESET
+            << msg
             << "\n\n";
 
         exit(EXIT_FAILURE);
@@ -32,9 +32,9 @@ void report(bool condition, error_t err)
     {
         std::string col_str(err.pos.col, ' ');
 
-        std::cout << "\nERROR: "
+        std::cout << "\nERROR ("
                   << err.code
-                  << " >> "
+                  << ") >> "
                   << err.msg
                   << "\n    "
                   << err.pos.ln
