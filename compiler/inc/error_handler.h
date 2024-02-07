@@ -31,6 +31,7 @@ typedef struct
     position pos;
 } error_t;
 
+auto mkerr(const char *context, const char *message, errc error_code, position position) -> error_t;
 void error(bool condition, std::string msg);
 void warning(bool condition, std::string msg);
 void report(bool condition, error_t err);
