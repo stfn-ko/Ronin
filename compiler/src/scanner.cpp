@@ -69,8 +69,6 @@ void skip_comments(auto &it, auto &pos, auto end)
         ++it;
         ++pos.col;
     }
-
-    pos.col += it - start;
 }
 
 void skip_whitespace(auto &it, auto &pos)
@@ -133,7 +131,7 @@ void get_tokens(auto &tokens, auto &it, auto &pos, auto end)
     if (*it == '_' || isalpha(*it))
     {
         // get identifiers
-        while (isalnum(*it) && it != end)
+        while ((isalnum(*it) || *it == '_') && it != end)
         {
             ++it;
         }
@@ -211,8 +209,6 @@ auto scan(const std::string &path) -> std::vector<token>
         {
             skip_whitespace(it, pos);
         }
-
-        // introduce tokens scanner that edits previous 3 tokens if needed
     }
 
     return tokens;
