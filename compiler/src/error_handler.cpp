@@ -18,7 +18,7 @@ void error(bool condition, std::string msg)
     }
 }
 
-void warining(bool condition, error_t err)
+void warning(bool condition, error_t err)
 {
     if (condition)
     {
