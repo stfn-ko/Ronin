@@ -355,7 +355,21 @@ void gt_(std::vector<token> &tokens, file_reader &fr, position &pos)
             get_next(fr);
         }
     }
+    else if (fr.iter == '\"')
+    {
+        str.push_back(fr.iter);
+        get_next(fr);
 
+        while (fr.iter != '\"')
+        {
+            error(fr.iter == EOF, "String literal is missing a closing sign");
+            str.push_back(fr.iter);
+            get_next(fr);
+        }
+
+        str.push_back(fr.iter);
+        get_next(fr);                                                                                                                                                                                                                                                                                                                                                                                                           
+    }
     else
     {
         str.push_back(fr.iter);
