@@ -368,7 +368,29 @@ void gt_(std::vector<token> &tokens, file_reader &fr, position &pos)
         }
 
         str.push_back(fr.iter);
-        get_next(fr);                                                                                                                                                                                                                                                                                                                                                                                                           
+        get_next(fr);
+    }
+    else if (fr.iter == '/')
+    {
+        while (fr.iter != EOF && !isspace(fr.iter))
+        {
+            str.push_back(fr.iter);
+            get_next(fr);
+        }
+
+        auto type = keyword_map.find(str);
+
+        if (type == keyword_map.end())
+        {
+            tokens.emplace_back(token{str.substr(0, 1), token_t::MISC_FW_SLASH, pos});
+            tokens.emplace_back(token{str.substr(1), token_t::UNDEFINED, pos});
+        }
+        else
+        {
+            tokens.emplace_back(token{str, type->second, pos});
+        }
+ 
+        return;
     }
     else
     {
