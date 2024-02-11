@@ -28,6 +28,7 @@ typedef enum
     KW_TYPE_STR,
 
     KW_FN,
+    KW_MOD,
 
     KW_IF,
     KW_ELSE,
@@ -39,6 +40,7 @@ typedef enum
 
     //
 
+    COMB_ACCESS,
     COMB_GTOE,
     COMB_LTOE,
     COMB_EQ,
