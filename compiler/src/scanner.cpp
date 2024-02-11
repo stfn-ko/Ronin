@@ -35,6 +35,7 @@ std::unordered_map<std::string, token_t> keyword_map =
         {"&&", COMB_AND},
         {"||", COMB_OR},
 
+        {"@", MISC_AT},
         {"/", MISC_FW_SLASH},
         {"\\", MISC_BC_SLASH},
         {"!", MISC_EXCLM},
@@ -389,7 +390,7 @@ void gt_(std::vector<token> &tokens, file_reader &fr, position &pos)
         {
             tokens.emplace_back(token{str, type->second, pos});
         }
- 
+
         return;
     }
     else
