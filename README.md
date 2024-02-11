@@ -10,7 +10,7 @@ I aspire for this language to strike a balance between the freedom of C and the 
 
 ## Idea
 
-Ronin will not have classes. It will have so called parent functions that contain a set of smaller functions, those can be called at any moment with syntax like:
+Ronin will not have classes. It will have so called modules that contain a set of smaller functions, those can be called at any moment with syntax like:
 
 ```perl
 # In Ronin, every value defaults to a read-only permission.
@@ -20,29 +20,30 @@ Ronin will not have classes. It will have so called parent functions that contai
 #
 # Functions implicitly don't have a return type
 
-math()
-{
-    add(i32 a, i32 b) -> option::i32
-    {
-        return as_copy(a + b);
-    };
+mod math {
+    fn add(i32 a, i32 b) -> i32 {
+        return a + b;
+    }
 
-    pi() -> f32
-    {
-        return 3.14159265358979;
-    };
-};
+    fn pi() -> f32 {
+        return 3.141592653;
+    }
+}
 
-math_with_def() -> default()
-{
-    add(i32 a, i32 b) -> option::i32
-    {
-        return as_copy(a + b);
-    };
+mod Rectangle {
+    @height -> f32;
+    @width -> f32;
 
-    default()
-    {
-        println("default function");
+    fn new(f32 _height, f32 _width) -> Rectangle {
+        return Rectangle{.height = _height, .width = _width};
+    }
+
+    fn area() -> f32 {
+        return @width * @height;
+    }
+
+    fn perimeter() -> f32 {
+        return 2 * (@width + @height);
     }
 }
 
@@ -50,21 +51,10 @@ math_with_def() -> default()
 
 main()
 {
-    match [&x] math::add(1,2) {
-        some => println("vale: {}", x);
-        none => println("no vale");
-    }
+    Rectangle r1 = Rectangle{.height = 10, .width = 10};
+    Rectangle r2 = Rectangle::new(2, 5);
 
-    math_with_def();
+    print(r1::area()); # >> 100
+    print(r2::perimeter()); # >> 14
 }
-
-            🡣                🡣                🡣
-
-|--> <console/>                                   •  •  •  |
-|                                                          |
-|  >> "value: 3"                                           |
-|                                                          |
-|  >> "defaualt function"                                  |
-|                                                          |
-
 ```
