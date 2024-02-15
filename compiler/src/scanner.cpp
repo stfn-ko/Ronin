@@ -147,7 +147,7 @@ void get_string_lit(file_reader &fr, std::vector<token> &tokens, std::string &st
 
     fr.write_to(str);
 
-    add_token(tokens, str, pos, token_t::LIT_STR);
+    add_token(tokens, str.substr(1, str.size() - 2), pos, token_t::LIT_STR);
 }
 
 void get_combo_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
