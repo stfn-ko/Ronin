@@ -130,6 +130,8 @@ public:
 
     auto is_alpha() -> bool { return isalpha(this->iter); }
 
+    auto is_punct() -> bool { return ispunct(this->iter); }
+
     auto is_space() -> bool { return isspace(this->iter); }
 
     auto is_digit() -> bool { return isdigit(this->iter); }
