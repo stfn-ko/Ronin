@@ -92,6 +92,55 @@ typedef struct
     position pos;
 } token;
 
+class file_reader
+{
+private:
+    FILE *self;
+    int iter;
+
+public:
+    file_reader()
+    {
+        this->self = nullptr;
+        this->iter = 0;
+    }
+
+    file_reader(const std::string &_path, int _iter)
+    {
+        this->self = fopen(_path.c_str(), "r");
+        error(this->self == NULL, "Error opening file");
+
+        this->iter = _iter;
+    }
+
+    ~file_reader()
+    {
+        fclose(this->self);
+    }
+
+    void write_to(std::string &s)
+    {
+        s.push_back(this->iter);
+        this->advance();
+    }
+
+    auto advance() -> int { return this->iter = getc(this->self); }
+
+    auto equals(char c) -> bool { return (this->iter == c); }
+
+    auto is_alpha() -> bool { return isalpha(this->iter); }
+
+    auto is_space() -> bool { return isspace(this->iter); }
+
+    auto is_digit() -> bool { return isdigit(this->iter); }
+
+    auto is_alnum() -> bool { return isalnum(this->iter); }
+
+    auto at_eof() -> bool { return (this->iter == EOF); }
+
+    auto peek() -> int { return this->iter; }
+};
+
 auto is_digits(const std::string &str) -> bool;
 auto is_delim(auto &it) -> bool;
 

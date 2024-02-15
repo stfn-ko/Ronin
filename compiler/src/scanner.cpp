@@ -70,17 +70,6 @@ auto is_digits(const std::string &str) -> bool
     return str.find_first_not_of("0123456789") == std::string::npos;
 }
 
-struct file_reader
-{
-    FILE *self;
-    int iter;
-};
-
-auto get_next(file_reader &fr) -> int
-{
-    return fr.iter = getc(fr.self);
-}
-
 auto get_type(std::string &str) -> token_t
 {
     return keyword_map.count(str) ? keyword_map.at(str) : token_t::IDENTIFIER;
@@ -88,15 +77,15 @@ auto get_type(std::string &str) -> token_t
 
 void skip_comments(file_reader &fr)
 {
-    while (fr.iter != EOF && fr.iter != '\n')
+    while (fr.peek() != EOF && !fr.equals('\n'))
     {
-        get_next(fr);
+        fr.advance();
     }
 }
 
 void skip_whitespace(file_reader &fr, position &pos)
 {
-    if (fr.iter == '\n')
+    if (fr.equals('\n'))
     {
         pos.col = 1;
         ++pos.ln;
@@ -106,7 +95,7 @@ void skip_whitespace(file_reader &fr, position &pos)
         ++pos.col;
     }
 
-    get_next(fr);
+    fr.advance();
 }
 
 void get_token(std::vector<token> &tokens, file_reader &fr, position &pos)
@@ -114,58 +103,52 @@ void get_token(std::vector<token> &tokens, file_reader &fr, position &pos)
     auto str = std::string();
 
     // get identifier
-    if (fr.iter == '_' || isalpha(fr.iter))
+    if (fr.equals('_') || fr.is_alpha())
     {
-        while ((isalnum(fr.iter) || fr.iter == '_') && fr.iter != EOF)
+        while ((fr.is_alnum() || fr.equals('_')) && !fr.at_eof())
         {
-            str.push_back(fr.iter);
-            get_next(fr);
+            fr.write_to(str);
         }
     }
     // get number literal
-    else if (isdigit(fr.iter))
+    else if (fr.is_digit())
     {
         auto punct_used = 0;
-        while ((isdigit(fr.iter) || fr.iter == '.') && fr.iter != EOF && punct_used <= 1)
+        while ((fr.is_digit() || fr.equals('.')) && !fr.at_eof() && punct_used <= 1)
         {
-            if (fr.iter == '.')
+            if (fr.equals('.'))
             {
                 punct_used++;
             }
 
-            str.push_back(fr.iter);
-            get_next(fr);
+            fr.write_to(str);
         }
 
         tokens.emplace_back(token{str, token_t::LIT_NUM, pos});
         pos.col += str.size();
         return;
     }
-    else if (fr.iter == '\"')
+    else if (fr.equals('\"'))
     {
-        str.push_back(fr.iter);
-        get_next(fr);
+        fr.write_to(str);
 
-        while (fr.iter != '\"')
+        while (!fr.equals('\"'))
         {
-            error(fr.iter == EOF, "String literal is missing a closing sign");
-            str.push_back(fr.iter);
-            get_next(fr);
+            error(fr.at_eof(), "String literal is missing a closing sign");
+            fr.write_to(str);
         }
 
-        str.push_back(fr.iter);
-        get_next(fr);
+        fr.write_to(str);
 
         tokens.emplace_back(token{str, token_t::LIT_STR, pos});
         pos.col += str.size();
         return;
     }
-    else if (fr.iter == '/')
+    else if (fr.equals('/'))
     {
-        while (fr.iter != EOF && !isspace(fr.iter))
+        while (!fr.at_eof() && !fr.is_space())
         {
-            str.push_back(fr.iter);
-            get_next(fr);
+            fr.write_to(str);
         }
 
         auto type = keyword_map.find(str);
@@ -185,8 +168,7 @@ void get_token(std::vector<token> &tokens, file_reader &fr, position &pos)
     // handle the fucking combo tokens
     else
     {
-        str.push_back(fr.iter);
-        get_next(fr);
+        fr.write_to(str);
     }
 
     tokens.emplace_back(token{str, get_type(str), pos});
@@ -196,21 +178,19 @@ void get_token(std::vector<token> &tokens, file_reader &fr, position &pos)
 
 auto scan(const std::string &path) -> std::vector<token>
 {
-    file_reader fr = {fopen(path.c_str(), "r"), 0};
-    get_next(fr);
-
-    error(fr.self == NULL, "Error opening file");
-
-    std::vector<token> tokens = {};
+    file_reader fr = file_reader(path, 0);
     position pos = {.ln = 1, .col = 1};
+    std::vector<token> tokens = {};
 
-    while (fr.iter != EOF)
+    fr.advance();
+
+    while (!fr.at_eof())
     {
-        if (fr.iter == '#')
+        if (fr.equals('#'))
         {
             skip_comments(fr);
         }
-        else if (isspace(fr.iter))
+        else if (fr.is_space())
         {
             skip_whitespace(fr, pos);
         }
@@ -220,6 +200,5 @@ auto scan(const std::string &path) -> std::vector<token>
         }
     }
 
-    fclose(fr.self);
     return tokens;
 }
