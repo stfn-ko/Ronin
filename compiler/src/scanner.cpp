@@ -165,7 +165,22 @@ void get_token(std::vector<token> &tokens, file_reader &fr, position &pos)
 
         return;
     }
-    // handle the fucking combo tokens
+    else if (fr.is_punct())
+    {
+        fr.write_to(str);
+        if (fr.is_punct())
+        {
+            fr.write_to(str);
+            
+            auto type = keyword_map.find(str);
+
+            if (type == keyword_map.end())
+            {
+                tokens.emplace_back(token{str.substr(0, 1), get_type(str), pos});
+                str.erase(0,1);
+            }
+        }
+    }
     else
     {
         fr.write_to(str);
