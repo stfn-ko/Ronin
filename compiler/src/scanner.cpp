@@ -70,7 +70,7 @@ auto is_digits(const std::string &str) -> bool
     return str.find_first_not_of("0123456789") == std::string::npos;
 }
 
-auto get_type(std::string &str) -> token_t
+auto get_type(const std::string &str) -> token_t
 {
     return keyword_map.count(str) ? keyword_map.at(str) : token_t::IDENTIFIER;
 }
@@ -98,6 +98,103 @@ void skip_whitespace(file_reader &fr, position &pos)
     fr.advance();
 }
 
+void add_token(std::vector<token> &tokens, const std::string &str, position &pos, token_t type = token_t::UNDEFINED)
+{
+    tokens.emplace_back(
+        token{
+            str,
+            type != token_t::UNDEFINED ? type : get_type(str),
+            pos});
+
+    pos.col += str.size();
+}
+
+void get_id(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
+{
+    while ((fr.is_alnum() || fr.equals('_')) && !fr.at_eof())
+    {
+        fr.write_to(str);
+    }
+
+    add_token(tokens, str, pos);
+}
+
+void get_number_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
+{
+    auto punct_used = 0;
+    while ((fr.is_digit() || fr.equals('.')) && !fr.at_eof() && punct_used <= 1)
+    {
+        if (fr.equals('.'))
+        {
+            punct_used++;
+        }
+
+        fr.write_to(str);
+    }
+
+    add_token(tokens, str, pos, token_t::LIT_NUM);
+}
+
+void get_string_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
+{
+    fr.write_to(str);
+
+    while (!fr.equals('\"'))
+    {
+        error(fr.at_eof(), "String literal is missing a closing sign");
+        fr.write_to(str);
+    }
+
+    fr.write_to(str);
+
+    add_token(tokens, str, pos, token_t::LIT_STR);
+}
+
+void get_combo_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
+{
+    fr.write_to(str);
+    if (fr.is_punct())
+    {
+        fr.write_to(str);
+
+        auto type = keyword_map.find(str);
+
+        if (type == keyword_map.end())
+        {
+            add_token(tokens, str.substr(0, 1), pos, token_t::MISC_FW_SLASH);
+            add_token(tokens, str.erase(0, 1), pos);
+        }
+        else
+        {
+            add_token(tokens, str, pos);
+        }
+    }
+    else
+    {
+        add_token(tokens, str, pos);
+    }
+}
+
+void get_permission_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
+{
+    while (!fr.at_eof() && !fr.is_space())
+    {
+        fr.write_to(str);
+    }
+
+    auto type = keyword_map.find(str);
+
+    if (type == keyword_map.end())
+    {
+        add_token(tokens, str.substr(0, 1), pos, token_t::MISC_FW_SLASH);
+        add_token(tokens, str.erase(0, 1), pos);
+    }
+    else
+    {
+        add_token(tokens, str, pos, type->second);
+    }
+}
+
 void get_token(std::vector<token> &tokens, file_reader &fr, position &pos)
 {
     auto str = std::string();
@@ -105,90 +202,29 @@ void get_token(std::vector<token> &tokens, file_reader &fr, position &pos)
     // get identifier
     if (fr.equals('_') || fr.is_alpha())
     {
-        while ((fr.is_alnum() || fr.equals('_')) && !fr.at_eof())
-        {
-            fr.write_to(str);
-        }
+        get_id(fr, tokens, str, pos);
     }
-    // get number literal
     else if (fr.is_digit())
     {
-        auto punct_used = 0;
-        while ((fr.is_digit() || fr.equals('.')) && !fr.at_eof() && punct_used <= 1)
-        {
-            if (fr.equals('.'))
-            {
-                punct_used++;
-            }
-
-            fr.write_to(str);
-        }
-
-        tokens.emplace_back(token{str, token_t::LIT_NUM, pos});
-        pos.col += str.size();
-        return;
+        get_number_lit(fr, tokens, str, pos);
     }
     else if (fr.equals('\"'))
     {
-        fr.write_to(str);
-
-        while (!fr.equals('\"'))
-        {
-            error(fr.at_eof(), "String literal is missing a closing sign");
-            fr.write_to(str);
-        }
-
-        fr.write_to(str);
-
-        tokens.emplace_back(token{str, token_t::LIT_STR, pos});
-        pos.col += str.size();
-        return;
+        get_string_lit(fr, tokens, str, pos);
     }
     else if (fr.equals('/'))
     {
-        while (!fr.at_eof() && !fr.is_space())
-        {
-            fr.write_to(str);
-        }
-
-        auto type = keyword_map.find(str);
-
-        if (type == keyword_map.end())
-        {
-            tokens.emplace_back(token{str.substr(0, 1), token_t::MISC_FW_SLASH, pos});
-            tokens.emplace_back(token{str.substr(1), token_t::UNDEFINED, pos});
-        }
-        else
-        {
-            tokens.emplace_back(token{str, type->second, pos});
-        }
-
-        return;
+        get_permission_token(fr, tokens, str, pos);
     }
     else if (fr.is_punct())
     {
-        fr.write_to(str);
-        if (fr.is_punct())
-        {
-            fr.write_to(str);
-            
-            auto type = keyword_map.find(str);
-
-            if (type == keyword_map.end())
-            {
-                tokens.emplace_back(token{str.substr(0, 1), get_type(str), pos});
-                str.erase(0,1);
-            }
-        }
+        get_combo_token(fr, tokens, str, pos);
     }
     else
     {
         fr.write_to(str);
+        add_token(tokens, str, pos);
     }
-
-    tokens.emplace_back(token{str, get_type(str), pos});
-    pos.col += str.size();
-    return;
 }
 
 auto scan(const std::string &path) -> std::vector<token>
