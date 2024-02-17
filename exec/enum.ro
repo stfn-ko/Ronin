@@ -1,0 +1,118 @@
+enum Perm {
+    r,
+    rx,
+    rs,
+    rw,
+    rwx,
+    rws,
+}
+
+enum Type {
+    bool,
+    isize,
+    i32,
+    usize,
+    u32,
+    f32,
+    string,
+}
+
+enum Combo {
+    access,
+    gtoe,
+    ltoe,
+    eq,
+    return,
+    minus_eq,
+    plus_eq,
+    add,
+    sub,
+    and,
+    or,
+}
+
+enum Lit {
+    num,
+    string,
+}
+
+enum Punct {
+    at,
+    fw_slash,
+    bc_slash,
+    exclm,
+    htag,
+    prcnt,
+    amprsnd,
+    star,
+    l_paren,
+    r_paren,
+    l_squig,
+    r_squig,
+    l_sqrbr,
+    r_sqrbr,
+    squote,
+    dquote,
+    gt,
+    lt,
+    eq,
+    semi,
+    col,
+    minus,
+    plus,
+    point,
+    comma,
+}
+
+enum Kw {
+    dir -> Perm, # or should I use `impl`?
+    dir -> Type, # should i use `->`?
+
+    fn,
+    main,
+    mod,
+    if,
+    else,
+    for,
+    while,
+    return,
+}
+
+enum Token {
+    undefined,
+    id,
+
+    dir -> Kw, 
+    dir -> Combo,
+    dir -> Lit,
+    dir -> Punct,
+}
+
+fn main() -> i32 {
+    # representation of enum hierarchy
+
+    Token token_t2 = Token::Kw::fn;
+    Token token_t1 = Token::Kw::main;
+    Token token_t3 = Token::Punct::l_paren;
+    Token token_t4 = Token::Punct::r_paren;
+    Token token_t5 = Token::Combo::return;
+    Token token_t6 = Token::Type::i32;
+
+    ###
+
+    Token token_t7 = Token::Perm::r;
+
+    match token_t7 {
+        Token::Perm >> {
+            io::println("This is a permission type token");
+            io::println("Its type is {}", token_t7.as_type());
+        }
+        _ >> {io::print("This is not a permission type token")}
+    }
+
+    # prints: 
+    #           >> This is a permission type token
+    #           >> Its type is Token::Perm::r
+
+    return 0;
+}

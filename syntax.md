@@ -99,14 +99,14 @@ match (expression) {
 ```Rust
 i32/r i = 10;
 match i {
-    0 := i32/r x :: {
+    0 := i32/r x => {
         println(x); //prints 0
     }
-    10 :: {
+    10 => {
         i32/rw x = 20;
         println(x); //prints 20
     }
-    _ :: {
+    _ => {
         println("Foo");
     }
 }
@@ -129,16 +129,16 @@ Here's an example that demonstrates multiple pattern matching in Ronin:
 ```Rust
 i32/r i = 10;
 match i {
-    0 | 1 :: {
+    0 | 1 => {
         println(i); //prints 0 or 1
     }
-    2 .. 10 :: {
+    2 .. 10 => {
         println(i); //prints anything from 2 up to 9
     }
-    10 ..= 20 :: {
+    10 ..= 20 => {
         println(i); //prints anything from 10 up to 20
     }
-    _ :: {
+    _ => {
         println("Foo");
     }
 

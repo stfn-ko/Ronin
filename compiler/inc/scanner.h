@@ -19,12 +19,16 @@ typedef enum
     KW_PERM_RWX,
     KW_PERM_RWS,
 
-    KW_ISIZE,
-    KW_I32,
-    KW_USIZE,
-    KW_U32,
-    KW_F32,
-    KW_STR,
+    KW_TYPE_BOOL,
+    KW_TYPE_ISIZE,
+    KW_TYPE_I32,
+    KW_TYPE_USIZE,
+    KW_TYPE_U32,
+    KW_TYPE_F32,
+    KW_TYPE_STR,
+
+    KW_FN,
+    KW_MOD,
 
     KW_IF,
     KW_ELSE,
@@ -36,9 +40,11 @@ typedef enum
 
     //
 
+    COMB_ACCESS,
     COMB_GTOE,
     COMB_LTOE,
     COMB_EQ,
+    COMB_RETURN,
     COMB_MINUS_EQ,
     COMB_PLUS_EQ,
     COMB_ADD,
@@ -52,7 +58,7 @@ typedef enum
     LIT_STR,
 
     //
-
+    MISC_AT,
     MISC_FW_SLASH,
     MISC_BC_SLASH,
     MISC_EXCLM,
@@ -81,16 +87,61 @@ typedef enum
 
 typedef struct
 {
-    size_t ln;
-    size_t col;
-} position;
-
-typedef struct
-{
     std::string lexeme;
     token_t type;
     position pos;
 } token;
+
+class file_reader
+{
+private:
+    FILE *self;
+    int iter;
+
+public:
+    file_reader()
+    {
+        this->self = nullptr;
+        this->iter = 0;
+    }
+
+    file_reader(const std::string &_path, int _iter)
+    {
+        this->self = fopen(_path.c_str(), "r");
+        error(this->self == NULL, "Error opening file");
+
+        this->iter = _iter;
+    }
+
+    ~file_reader()
+    {
+        fclose(this->self);
+    }
+
+    void write_to(std::string &s)
+    {
+        s.push_back(this->iter);
+        this->advance();
+    }
+
+    auto advance() -> int { return this->iter = getc(this->self); }
+
+    auto equals(char c) -> bool { return (this->iter == c); }
+
+    auto is_alpha() -> bool { return isalpha(this->iter); }
+
+    auto is_punct() -> bool { return ispunct(this->iter); }
+
+    auto is_space() -> bool { return isspace(this->iter); }
+
+    auto is_digit() -> bool { return isdigit(this->iter); }
+
+    auto is_alnum() -> bool { return isalnum(this->iter); }
+
+    auto at_eof() -> bool { return (this->iter == EOF); }
+
+    auto peek() -> int { return this->iter; }
+};
 
 auto is_digits(const std::string &str) -> bool;
 auto is_delim(auto &it) -> bool;
