@@ -29,13 +29,12 @@ typedef enum
 
     KW_FN,
     KW_MOD,
-
     KW_IF,
     KW_ELSE,
-
+    KW_TRUE,
+    KW_FALSE,
     KW_FOR,
     KW_WHILE,
-
     KW_RETURN,
 
     //
@@ -144,13 +143,14 @@ public:
 };
 
 auto is_digits(const std::string &str) -> bool;
-auto is_delim(auto &it) -> bool;
 
-void skip_comments(auto &it, auto &pos, auto end);
-void skip_whitespace(auto &it, auto &pos);
+void skip_comments(file_reader &fr);
+void skip_whitespace(file_reader &fr, position &pos);
 
-void read_string(auto &tokens, auto &start, auto &it, auto &pos, auto &end);
-void read_keyword_with_delimeter(auto &start, auto &it);
+void get_number_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
+void get_string_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
+void get_combo_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
+void get_permission_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
 
-void get_tokens(auto &tokens, auto &it, auto &pos, auto end);
+void get_token(std::vector<token> &tokens, file_reader &fr, position &pos);
 auto scan(const std::string &path) -> std::vector<token>;
