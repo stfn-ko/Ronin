@@ -30,6 +30,7 @@ std::unordered_map<std::string, token_t> keyword_map = {
     {">=", COMB_GTOE},
     {"<=", COMB_LTOE},
     {"==", COMB_EQ},
+    {"!=", COMB_NEQ},
     {"->", COMB_RETURN},
     {"+=", COMB_MINUS_EQ},
     {"-=", COMB_PLUS_EQ},
