@@ -65,7 +65,7 @@ typedef enum
     PUNCT_HTAG,
     PUNCT_PRCNT,
     PUNCT_AMPRSND,
-    PUNCT_STAR,
+    PUNCT_ASTER,
     PUNCT_L_PAREN,
     PUNCT_R_PAREN,
     PUNCT_L_SQUIG,
