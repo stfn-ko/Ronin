@@ -162,7 +162,7 @@ void get_combo_token(file_reader &fr, std::vector<token> &tokens, std::string &s
 
         if (type == keyword_map.end())
         {
-            add_token(tokens, str.substr(0, 1), pos, token_t::PUNCT_FW_SLASH);
+            add_token(tokens, str.substr(0, 1), pos);
             add_token(tokens, str.erase(0, 1), pos);
         }
         else
@@ -181,6 +181,10 @@ void get_permission_token(file_reader &fr, std::vector<token> &tokens, std::stri
     while (!fr.at_eof() && !fr.is_space())
     {
         fr.write_to(str);
+
+        if (fr.is_punct()) {
+            break;
+        }
     }
 
     auto type = keyword_map.find(str);
