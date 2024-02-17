@@ -38,31 +38,31 @@ std::unordered_map<std::string, token_t> keyword_map = {
     {"&&", COMB_AND},
     {"||", COMB_OR},
 
-    {"@", MISC_AT},
-    {"/", MISC_FW_SLASH},
-    {"\\", MISC_BC_SLASH},
-    {"!", MISC_EXCLM},
-    {"#", MISC_HTAG},
-    {"%", MISC_PRCNT},
-    {"&", MISC_AMPRSND},
-    {"*", MISC_STAR},
-    {"(", MISC_L_PAREN},
-    {")", MISC_R_PAREN},
-    {"{", MISC_L_SQUIG},
-    {"}", MISC_R_SQUIG},
-    {"[", MISC_L_SQRBR},
-    {"]", MISC_R_SQRBR},
-    {"'", MISC_SQUOTE},
-    {"\"", MISC_DQUOTE},
-    {";", MISC_SEMI},
-    {":", MISC_COL},
-    {">", MISC_GT},
-    {"<", MISC_LT},
-    {"=", MISC_EQ},
-    {"-", MISC_MINUS},
-    {"+", MISC_PLUS},
-    {".", MISC_POINT},
-    {",", MISC_COMMA},
+    {"@", PUNCT_AT},
+    {"/", PUNCT_FW_SLASH},
+    {"\\", PUNCT_BC_SLASH},
+    {"!", PUNCT_EXCLM},
+    {"#", PUNCT_HTAG},
+    {"%", PUNCT_PRCNT},
+    {"&", PUNCT_AMPRSND},
+    {"*", PUNCT_STAR},
+    {"(", PUNCT_L_PAREN},
+    {")", PUNCT_R_PAREN},
+    {"{", PUNCT_L_SQUIG},
+    {"}", PUNCT_R_SQUIG},
+    {"[", PUNCT_L_SQRBR},
+    {"]", PUNCT_R_SQRBR},
+    {"'", PUNCT_SQUOTE},
+    {"\"", PUNCT_DQUOTE},
+    {";", PUNCT_SEMI},
+    {":", PUNCT_COL},
+    {">", PUNCT_GT},
+    {"<", PUNCT_LT},
+    {"=", PUNCT_EQ},
+    {"-", PUNCT_MINUS},
+    {"+", PUNCT_PLUS},
+    {".", PUNCT_POINT},
+    {",", PUNCT_COMMA},
 };
 
 auto is_digits(const std::string &str) -> bool
@@ -161,7 +161,7 @@ void get_combo_token(file_reader &fr, std::vector<token> &tokens, std::string &s
 
         if (type == keyword_map.end())
         {
-            add_token(tokens, str.substr(0, 1), pos, token_t::MISC_FW_SLASH);
+            add_token(tokens, str.substr(0, 1), pos, token_t::PUNCT_FW_SLASH);
             add_token(tokens, str.erase(0, 1), pos);
         }
         else
@@ -186,7 +186,7 @@ void get_permission_token(file_reader &fr, std::vector<token> &tokens, std::stri
 
     if (type == keyword_map.end())
     {
-        add_token(tokens, str.substr(0, 1), pos, token_t::MISC_FW_SLASH);
+        add_token(tokens, str.substr(0, 1), pos, token_t::PUNCT_FW_SLASH);
         add_token(tokens, str.erase(0, 1), pos);
     }
     else
