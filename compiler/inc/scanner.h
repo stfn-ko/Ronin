@@ -158,7 +158,7 @@ auto is_digits(const std::string &str) -> bool;
 void skip_comments(file_reader &fr);
 void skip_whitespace(file_reader &fr, position &pos);
 
-void get_number_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
+void get_number_lit(file_reader &fr, std::vector<token> &tokens, position &pos);
 void get_string_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
 void get_combo_token(file_reader &fr, std::vector<token> &tokens, position &pos);
 void get_permission_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);

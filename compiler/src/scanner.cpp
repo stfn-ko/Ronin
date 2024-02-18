@@ -120,20 +120,30 @@ void get_id(file_reader &fr, std::vector<token> &tokens, std::string &str, posit
     add_token(tokens, str, pos);
 }
 
-void get_number_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
+void get_number_lit(file_reader &fr, std::vector<token> &tokens, position &pos)
 {
+    std::string lxm = std::string();
     auto punct_used = 0;
-    while ((fr.is_digit() || fr.equals('.')) && !fr.at_eof() && punct_used <= 1)
-    {
-        if (fr.equals('.'))
-        {
-            punct_used++;
-        }
 
-        fr.write_to(str);
+    while (!fr.at_eof() && (fr.is_digit() || fr.equals('.')))
+    {
+        if (fr.equals('.') && (++punct_used > 1))
+            break;
     }
 
-    add_token(tokens, str, pos, token_t::LIT_NUM);
+    fr.write_to(lxm);
+}
+
+if (lxm.back() == '.')
+{
+    lxm.pop_back();
+    add_token(tokens, lxm, pos, token_t::LIT_NUM);
+    add_token(tokens, ".", pos, token_t::PUNCT_POINT);
+}
+else
+{
+    add_token(tokens, lxm, pos, token_t::LIT_NUM);
+}
 }
 
 void get_string_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
@@ -214,7 +224,7 @@ void get_token(std::vector<token> &tokens, file_reader &fr, position &pos)
     }
     else if (fr.is_digit())
     {
-        get_number_lit(fr, tokens, str, pos);
+        get_number_lit(fr, tokens, pos);
     }
     else if (fr.equals('\"'))
     {
