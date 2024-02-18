@@ -151,29 +151,31 @@ void get_string_lit(file_reader &fr, std::vector<token> &tokens, std::string &st
     add_token(tokens, str.substr(1, str.size() - 2), pos, token_t::LIT_STR);
 }
 
-void get_combo_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
+void get_combo_token(file_reader &fr, std::vector<token> &tokens, position &pos)
 {
+    std::string str = std::string();
     fr.write_to(str);
-    if (fr.is_punct())
+
+    if (fr.is_punct() == false)
     {
-        fr.write_to(str);
+        add_token(tokens, str, pos);
+        return;
+    }
 
-        auto type = keyword_map.find(str);
+    str.push_back(fr.peek());
+    auto type = keyword_map.find(str);
 
-        if (type == keyword_map.end())
-        {
-            add_token(tokens, str.substr(0, 1), pos);
-            add_token(tokens, str.erase(0, 1), pos);
-        }
-        else
-        {
-            add_token(tokens, str, pos);
-        }
+    if (type == keyword_map.end())
+    {
+        add_token(tokens, str.substr(0, 1), pos);
+        return;
     }
     else
     {
-        add_token(tokens, str, pos);
+        add_token(tokens, str, pos, type->second);
     }
+
+    fr.advance();
 }
 
 void get_permission_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
@@ -182,7 +184,8 @@ void get_permission_token(file_reader &fr, std::vector<token> &tokens, std::stri
     {
         fr.write_to(str);
 
-        if (fr.is_punct()) {
+        if (fr.is_punct())
+        {
             break;
         }
     }
@@ -223,7 +226,7 @@ void get_token(std::vector<token> &tokens, file_reader &fr, position &pos)
     }
     else if (fr.is_punct())
     {
-        get_combo_token(fr, tokens, str, pos);
+        get_combo_token(fr, tokens, pos);
     }
     else
     {
