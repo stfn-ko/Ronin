@@ -118,28 +118,38 @@ public:
         fclose(this->self);
     }
 
+    // Automatically increments the iterator and appends the character to the given string
     void write_to(std::string &s)
     {
         s.push_back(this->iter);
         this->advance();
     }
 
+    // Advance the iterator and return the updated value
     auto advance() -> int { return this->iter = getc(this->self); }
 
+    // Check if the current character equals the provided character
     auto equals(char c) -> bool { return (this->iter == c); }
 
+    // Check if the current character is an alphabetic character
     auto is_alpha() -> bool { return isalpha(this->iter); }
 
+    // Check if the current character is a punctuation character
     auto is_punct() -> bool { return ispunct(this->iter); }
 
+    // Check if the current character is a whitespace character
     auto is_space() -> bool { return isspace(this->iter); }
 
+    // Check if the current character is a digit
     auto is_digit() -> bool { return isdigit(this->iter); }
 
+    // Check if the current character is alphanumeric
     auto is_alnum() -> bool { return isalnum(this->iter); }
 
+    // Check if the iterator is at the end of the file
     auto at_eof() -> bool { return (this->iter == EOF); }
 
+    // Return the current character without advancing the iterator
     auto peek() -> int { return this->iter; }
 };
 
@@ -150,7 +160,7 @@ void skip_whitespace(file_reader &fr, position &pos);
 
 void get_number_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
 void get_string_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
-void get_combo_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
+void get_combo_token(file_reader &fr, std::vector<token> &tokens, position &pos);
 void get_permission_token(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos);
 
 void get_token(std::vector<token> &tokens, file_reader &fr, position &pos);
