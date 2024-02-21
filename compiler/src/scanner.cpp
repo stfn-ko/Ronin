@@ -128,22 +128,23 @@ void get_number_lit(file_reader &fr, std::vector<token> &tokens, position &pos)
     while (!fr.at_eof() && (fr.is_digit() || fr.equals('.')))
     {
         if (fr.equals('.') && (++punct_used > 1))
+        {
             break;
+        }
+
+        fr.write_to(lxm);
     }
 
-    fr.write_to(lxm);
-}
-
-if (lxm.back() == '.')
-{
-    lxm.pop_back();
-    add_token(tokens, lxm, pos, token_t::LIT_NUM);
-    add_token(tokens, ".", pos, token_t::PUNCT_POINT);
-}
-else
-{
-    add_token(tokens, lxm, pos, token_t::LIT_NUM);
-}
+    if (lxm.back() == '.')
+    {
+        lxm.pop_back();
+        add_token(tokens, lxm, pos, token_t::LIT_NUM);
+        add_token(tokens, ".", pos, token_t::PUNCT_POINT);
+    }
+    else
+    {
+        add_token(tokens, lxm, pos, token_t::LIT_NUM);
+    }
 }
 
 void get_string_lit(file_reader &fr, std::vector<token> &tokens, std::string &str, position &pos)
