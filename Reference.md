@@ -1,12 +1,62 @@
-# Meet Ronin
+# Welcome
+
+Hello, fellow explorers, here I will try (my best) to document everything there is to know about Ronin.
+
+> [!WARNING]  
+> The reference is not finished
+
+# Memory Management
+
+> todo
+
+## Permissions System
+
+> todo
+
+# Statements and Expressions
+
+## Statements
+
+> todo
+
+## Expressions
+
+- _Expression_ →
+  &nbsp; _Literal Expression_
+  $|$ _Grouping_
+  $|$ _Unary_
+  $|$ _Binary_
 
 <br>
+
+- _Literal Expression_ →
+  &nbsp; INTEGER LITERAL
+  $|$ FLOAT_LITERAL
+  $|$ STRING_LITERAL
+  $|$ `true` $|$ `false`
+
+<br>
+
+- _Grouping_ → `(` _Expression_ `)`
+
+<br>
+
+- _Unary_ → ( `-` $|$ `!` ) + _Expression_
+
+<br>
+
+- _Binary_ → _Expression_ + _Operator_ + _Expression_
+
+<br>
+
+- _Operator_ → `==` $|$ `!=` $|$ `<` $|$ `<=` $|$ `>` $|$ `>=` $|$ `+` $|$ `-` $|$ `*` $|$ `/`
 
 # Variable assignment
 
 Ownership can be of two types: `r` and `rw`, which stand for read-only & read-write.
 
 ## Examples
+
 ```Rust
     i32/rw variable = 10;
 
@@ -90,6 +140,7 @@ match (expression) {
     }
 }
 ```
+
 <br>
 
 ## Patterns
