@@ -1,5 +1,6 @@
 ### MOYA HUYNYA ###
 *.exe
+*.nix
 docs/
 
 ### C++ ###
