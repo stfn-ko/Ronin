@@ -2,10 +2,8 @@
 
 #include "scanner.h"
 
-typedef struct
-{
+typedef struct {
 
 } AST;
-
 
 auto parse(std::vector<token> tokens) -> AST;
